@@ -1,13 +1,11 @@
 <template lang="pug">
-#app
-  router-view 
+.container
+  h3 home page
 </template>
 
 <script>
 export default {
-  name: 'App',
   components: {},
+  mounted() {},
 };
 </script>
-
-<style></style>
