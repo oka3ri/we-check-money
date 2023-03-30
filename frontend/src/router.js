@@ -1,10 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-const Home = () =>
-  import(/* webpackChunkName: "home" */ './components/Home/Home');
+const Home = () => import(/* webpackChunkName: "home" */ './views/Home/Home');
 const Login = () =>
-  import(/* webpackChunkName: "login" */ './components/Login/Login');
+  import(/* webpackChunkName: "login" */ './views/Login/Login');
 
 Vue.use(Router);
 
