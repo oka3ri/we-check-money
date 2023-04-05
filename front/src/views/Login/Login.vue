@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   //- Header
-  .header.bg-gradient-success.py-7.py-lg-8.pt-lg-9
+  .header.bg-gradient-success.py-7.py-lg-3.pt-lg-9
     b-container
       .header-body.text-center.mb-7
         //- b-row.justify-content-center
@@ -22,11 +22,11 @@ div
               small 일반 회원 로그인
             validation-observer(v-slot="{handleSubmit}" ref="formValidator")
               b-form(role="form" @submit.prevent="handleSubmit(onSubmit)")
-                base-input.mb-3(alternative name="Id" :rules="{required: true, email: true}" prepend-icon="ni ni-email-83" placeholder="아이디" v-model="model.email")
-                base-input.mb-3(alternative name="Password" :rules="{required: true, min: 6}" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="model.password")
-                //- b-form-checkbox(v-model="model.rememberMe") Remember me
+                base-input.mb-3(alternative name="id" prepend-icon="ni ni-email-83" placeholder="아이디" v-model="user.id")
+                base-input.mb-3(alternative name="pw" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="user.password")
+                //- b-form-checkbox(v-model="user.rememberMe") Remember me
                 .text-center
-                  base-button.my-4(type="primary" native-type="submit") 로그인
+                  base-button.my-4(type="primary" native-type="submit" @click='login()') 로그인
           b-card-body.px-lg-5.py-lg-5
             .text-muted.text-center.mt-2.mb-3
               small 소셜 계정으로 로그인
@@ -38,8 +38,8 @@ div
                 //- span.btn-inner--icon
                 img(src="img/icons/common/kakao.png")
               .social-login-btn.google-btn
-                span.btn-inner--icon
-                  img(src="img/icons/common/google.png")
+                //- span.btn-inner--icon
+                img(src="img/icons/common/google.png")
               //- a.btn.btn-neutral.btn-icon.naver-wrapper(href="#")
               //-   span.btn-inner--icon
               //-     img(src="img/icons/common/naver.png")
@@ -65,14 +65,48 @@ div
 export default {
   data() {
     return {
-      model: {
-        email: "",
+      user: {
+        id: "",
         password: "",
-        rememberMe: false,
+        // rememberMe: false,
       },
+      idRegex: /^[a-zA-Z][0-9a-zA-Z]{5,11}$/,
+      pwRegex:
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
+      // idRule: {
+      //   required: true,
+      //   min: 6,
+      //   max: 12,
+      //   regex: /^[a-zA-Z][0-9a-zA-Z]{5,11}$/,
+      // },
+      // pwdRule: {
+      //   required: true,
+      //   min: 10,
+      //   max: 20,
+      //   regex:
+      //     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
+      // },
     };
   },
   methods: {
+    login() {
+      if (this.user.id == "") {
+        alert("아이디를 입력해 주세요.");
+        return;
+      } else if (this.user.password == "") {
+        alert("비밀번호를 입력해 주세요.");
+        return;
+      }
+      if (
+        !this.idRegex.test(this.user.id) ||
+        !this.pwRegex.test(this.user.password)
+      ) {
+        alert(
+          "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다."
+        );
+        return;
+      }
+    },
     onSubmit() {
       // this will be called only after form is valid. You can do api call here to login
     },
@@ -80,6 +114,15 @@ export default {
 };
 </script>
 <style>
+.card .card-body {
+  padding-top: 5px;
+}
+.card-body .mb-3 {
+  margin-top: 0 !important;
+}
+.card .btn {
+  width: 100%;
+}
 .btn-wrapper {
   display: flex;
   flex-direction: row;
@@ -110,11 +153,14 @@ export default {
   border: none;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .btn-wrapper .naver-btn {
   background-color: #03c75a;
 }
 .btn-wrapper .google-btn {
+  background-color: #fff;
+  border: 1px solid #f5f5f5;
 }
 .btn-wrapper .kakao-btn {
   overflow: hidden;
@@ -129,7 +175,16 @@ export default {
   border: none;
   background-position: center; */
 }
-.naver-btn {
+.btn-wrapper .google-btn img {
+  width: 20px;
+  height: 20px;
+}
+.btn-wrapper .kakao-btn img {
+  width: 25px;
+}
+.naver-btn,
+.kakao-btn {
+  margin-right: 10px;
 }
 .google-btn {
 }

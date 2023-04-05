@@ -59,7 +59,7 @@
       </slot>
       <slot name="error">
         <div v-if="errors[0]" class="invalid-feedback" style="display: block">
-          {{ name }}
+          {{ errMsg(name) }}
         </div>
       </slot>
     </b-form-group>
@@ -183,6 +183,13 @@ export default {
     onBlur(evt) {
       this.focused = false;
       this.$emit("blur", evt);
+    },
+    errMsg(type) {
+      if (type == "id") {
+        return "잘못된 아이디입니다.";
+      } else if (type == "pw") {
+        return "잘못된 패스워드입니다.";
+      }
     },
   },
 };
