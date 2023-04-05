@@ -5,29 +5,27 @@
         <b-col xl="6">
           <div class="copyright text-center text-xl-left text-muted">
             © {{ year }}
-            <a
-              href="https://www.creative-tim.com"
-              class="font-weight-bold ml-1"
-              target="_blank"
-              >Creative Tim</a
-            >
+            <a href="" class="font-weight-bold ml-1" target="_blank">Wecheck</a>
           </div>
         </b-col>
         <b-col xl="6" class="col-xl-6">
           <b-nav
             class="nav-footer justify-content-center justify-content-xl-end"
           >
-            <b-nav-item href="https://www.creative-tim.com" target="_blank">
+            <!-- <b-nav-item href="https://www.creative-tim.com" target="_blank">
               Creative Tim
-            </b-nav-item>
+            </b-nav-item> -->
             <b-nav-item
-              href="https://www.creative-tim.com/presentation"
+              href="https://we-check.notion.site/we-check-fa358ddd9fe94df4a5273071670c0607"
               target="_blank"
             >
               About Us
             </b-nav-item>
-            <b-nav-item href="http://blog.creative-tim.com" target="_blank">
-              Blog
+            <b-nav-item
+              href="https://github.com/oka3ri/we-check-money"
+              target="_blank"
+            >
+              GitHub
             </b-nav-item>
             <b-nav-item
               href="https://www.creative-tim.com/license"
