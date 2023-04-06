@@ -4,6 +4,18 @@ div
   .header.bg-gradient-success.py-7.py-lg-7.pt-lg-9
     b-container
       .header-body.text-center.mb-7
+        b-row.justify-content-center
+          b-col.px-5(xl="6" lg="6" md="8")
+            h1.text-white wecheck에 오신 것을 환영합니다!
+            p.text-lead.text-white
+              | 자산의 이동을 정확하고 자세하게 
+              span.highlight-info-txt check
+              br
+              | 모임에서 오고 가는 돈을 투명하게 
+              span.highlight-info-txt check
+              br
+              //- spsan.highlight-info-txt wecheck 
+              | 지금 바로 가입하여 이용하세요.
     .separator.separator-bottom.separator-skew.zindex-100
       svg(x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg")
         polygon.fill-default(points="2560 0 2560 100 0 100")
@@ -15,17 +27,23 @@ div
         b-card.bg-secondary.border-0.mb-0(no-body)
           b-card-header.bg-transparent.px-lg-5.py-lg-5
             .text-center.text-muted.mb-4
-              small 일반 회원 로그인
+              small 일반 회원으로 가입하기
             validation-observer(v-slot="{handleSubmit}" ref="formValidator")
               b-form
-                base-input.mb-3(alternative name="id" prepend-icon="ni ni-email-83" placeholder="아이디" v-model="user.id")
-                base-input.mb-3(alternative name="pw" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="user.password")
+                base-input.mb-3(alternative name="id" required="duplicateId" :rules="idRule" prepend-icon="ni ni-single-02" type="text" placeholder="아이디" v-model="user.id")
+                //- base-input.mb-3(alternative name="pw" prepend-icon="ni ni-single-02" placeholder="닉네임" v-model="user.nickname")
+                base-input.mb-3(alternative name="nickname" :rules="nameRule" prepend-icon="ni ni-badge" type="text" placeholder="닉네임" v-model="user.nickname")
+
+                base-input.mb-3(alternative name="tel" :rules="telRule" prepend-icon="ni ni-mobile-button" type="tel" placeholder="전화번호" maxlength="13" v-model="user.tel" @input="ChangeHipenTel($event)")
+
+                base-input.mb-3(alternative name="pw" :rules="pwdRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="user.password")
+                base-input.mb-3(alternative name="pw-confirm" required="confirmed:password" :rules="pwdConfirmRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호 확인" v-model="user.passwordConfirm")
                 //- b-form-checkbox(v-model="user.rememberMe") Remember me
                 .text-center
-                  base-button.my-4(type="primary" native-type="button" @click='login()') 로그인
+                  base-button.my-4(type="primary" native-type="button" @click='login()') 가입하기
           b-card-body.px-lg-5.py-lg-5
             .text-muted.text-center.mt-2.mb-3
-              small 소셜 계정으로 로그인
+              small 소셜 계정으로 가입하기
             .btn-wrapper.text-center
               .social-login-btn.naver-btn
                 //- span.btn-inner--icon
@@ -36,13 +54,13 @@ div
               .social-login-btn.google-btn
                 //- span.btn-inner--icon
                 img(src="img/icons/common/google.png")
-        b-row.mt-3
+        //- b-row.mt-3
           b-col(cols="6")
             //- TODO: router-link 부분은 추후에 싸그리 싹싹 바꿔야 함
-            .text-light(@click="$_goTo({name: 'login'})")
+            router-link.text-light(@click="$_goTo({name: 'login'})")
               small 아이디 | 비밀번호 찾기
           b-col.text-right(cols="6")
-            .text-light(@click="$_goTo({name: 'signup'})")
+            router-link.text-light(@click="$_goTo({name: 'signup'})")
               small 회원가입
 </template>
 <script>
@@ -51,25 +69,45 @@ export default {
     return {
       user: {
         id: "",
+        nickname: "",
+        tel: "",
         password: "",
+        passwordConfirm: "",
         // rememberMe: false,
       },
-      idRegex: /^[a-zA-Z][0-9a-zA-Z]{5,11}$/,
-      pwRegex:
-        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
-      // idRule: {
-      //   required: true,
-      //   min: 6,
-      //   max: 12,
-      //   regex: /^[a-zA-Z][0-9a-zA-Z]{5,11}$/,
-      // },
-      // pwdRule: {
-      //   required: true,
-      //   min: 10,
-      //   max: 20,
-      //   regex:
-      //     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
-      // },
+      idRule: {
+        required: true,
+        duplicateId: "",
+        // min: 6,
+        // max: 12,
+        regex: /^[a-z]{1}[a-z0-9]{5,11}$/,
+      },
+      nameRule: {
+        required: true,
+        // min: 2,
+        // max: 10,
+        regex: /^[가-힣]{2,10}$/,
+      },
+      telRule: {
+        required: true,
+        // min: 6,
+        // max: 12,
+        regex: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
+      },
+      pwdRule: {
+        required: true,
+        // min: 10,
+        // max: 20,
+        regex:
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
+      },
+      pwdConfirmRule: {
+        required: true,
+        // min: 10,
+        // max: 20,
+        regex:
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
+      },
     };
   },
   methods: {
@@ -91,6 +129,20 @@ export default {
         return;
       }
     },
+    ChangeHipenTel(e) {
+      // .replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+      this.user.tel = e
+        .replace(/[^0-9]/g, "")
+        .replace(
+          /(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g,
+          "$1-$2-$3"
+        );
+    },
+    // setHypenTel(value) {
+    //   this.user.tel = value;
+    //   console.log(this.user.tel);
+    //   console.log(value);
+    // },
     onSubmit() {
       // this will be called only after form is valid. You can do api call here to login
     },
@@ -98,6 +150,11 @@ export default {
 };
 </script>
 <style>
+.highlight-info-txt {
+  font-weight: 700;
+  font-size: 18px;
+  /* color: #ffff7e; */
+}
 .card .card-body {
   padding-top: 5px;
 }
@@ -131,8 +188,8 @@ export default {
   background-color: #ffeb00;
 } */
 .btn-wrapper .social-login-btn {
-  width: 38px;
-  height: 38px;
+  width: 45px;
+  height: 45px;
   border-radius: 100%;
   border: none;
   display: flex;
@@ -144,14 +201,14 @@ export default {
 }
 .btn-wrapper .google-btn {
   background-color: #fff;
-  border: 1px solid #f5f5f5;
+  border: 1px solid #e6e6e6;
 }
 .btn-wrapper .kakao-btn {
   overflow: hidden;
   background-color: #ffeb00;
 }
 .btn-wrapper .social-login-btn img {
-  width: 35px;
+  width: 30px;
   /* vertical-align: top;
   width: 38px;
   height: 38px;
@@ -160,12 +217,12 @@ export default {
   background-position: center; */
 }
 .btn-wrapper .google-btn img {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
-.btn-wrapper .kakao-btn img {
+/* .btn-wrapper .kakao-btn img {
   width: 25px;
-}
+} */
 .naver-btn,
 .kakao-btn {
   margin-right: 10px;

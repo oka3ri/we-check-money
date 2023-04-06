@@ -1,11 +1,11 @@
 <template lang="pug">
 .main-content.bg-default
   base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu" :transparent="true" menu-classes="justify-content-end" expand="lg")
-    .navbar-wrapper(slot="brand")
-      b-navbar-brand(to="/")
-        img(src="img/brand/white.png")
-    <template lang='pug'>
-      .navbar-collapse-header
+    .navbar-wrapper
+      //- b-navbar-brand(to="/")
+      a.navbar-brand.active(href="#" target="_self" @click="$_goTo({name: 'login'})")
+        img.header-logo(src="img/brand/white.png")
+      //- .navbar-collapse-header
         b-row
           b-col.collapse-brand(cols="6")
             router-link(to="/")
@@ -14,20 +14,14 @@
             button.navbar-toggler(type="button" @click="showMenu = false")
               span
               span
-    </template>
-    b-navbar-nav.align-items-lg-center.ml-lg-auto
-      //- b-nav-item(to="/dashboard")
-        i.ni.ni-planet
-        span.nav-link-inner--text Dashboard
-      b-nav-item(to="/register")
+    //- b-navbar-nav.align-items-lg-center.ml-lg-auto
+    ul.navbar-nav.align-items-lg-center.ml-lg-auto
+      b-nav-item(@click="$_goTo({name: 'signup'})")
         i.ni.ni-circle-08
         span.nav-link-inner--text 회원가입
-      b-nav-item(to="/login")
+      b-nav-item(@click="$_goTo({name: 'login'})")
         i.ni.ni-key-25
         span.nav-link-inner--text 로그인
-      //- b-nav-item(to="/profile")
-        i.ni.ni-single-02
-        span.nav-link-inner--text Profile
 </template>
 <script>
 import { BaseNav } from "@/components";
@@ -131,5 +125,8 @@ $scaleSize: 0.8;
 
 .main-content .zoomOut {
   animation-name: zoomOut8;
+}
+.header-logo {
+  padding: 0 12px;
 }
 </style>

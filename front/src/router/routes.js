@@ -3,6 +3,8 @@ import DashboardLayout from "@/views/Layout/DashboardLayout.vue";
 import NotFound from "@/views/NotFoundPage.vue";
 const Login = () =>
   import(/* webpackChunkName: "login" */ "../views/Login/Login");
+const SignUp = () =>
+  import(/* webpackChunkName: "home" */ "../views/Login/SignUp");
 const Home = () => import(/* webpackChunkName: "home" */ "../views/Home/Home");
 
 const routes = [
@@ -20,6 +22,11 @@ const routes = [
     path: "/home",
     name: "home",
     component: Home,
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: SignUp,
   },
   // {
   //   path: '/statistics',
