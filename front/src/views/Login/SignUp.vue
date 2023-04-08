@@ -35,6 +35,14 @@ div
                 base-input.mb-3(alternative name="nickname" :rules="nameRule" prepend-icon="ni ni-badge" type="text" placeholder="닉네임" v-model="user.nickname")
 
                 base-input.mb-3(alternative name="tel" :rules="telRule" prepend-icon="ni ni-mobile-button" type="tel" placeholder="전화번호" maxlength="13" v-model="user.tel" @input="ChangeHipenTel($event)")
+                
+                .auth-num-check-area
+                  .auth-num-check-form
+                    base-input.mb-3(alternative name="auth-number" prepend-icon="ni ni-key-25" type="text" placeholder="인증번호" maxlength="6" v-model="authNumber" )
+                    .auth-num-check-button-group
+                      //- base-button.signup-check-btn 인증번호 받기
+                      base-button.signup-check-btn 인증하기
+                  //- .invalid-feedback(style="display: block;") 인증번호를 입력해주세요
 
                 base-input.mb-3(alternative name="pw" :rules="pwdRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="user.password")
                 base-input.mb-3(alternative name="pw-confirm" required="confirmed:password" :rules="pwdConfirmRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호 확인" v-model="user.passwordConfirm")
@@ -108,7 +116,21 @@ export default {
         regex:
           /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
       },
+      authNumber: "",
+      timeCounter: 180,
+      remainingTime: "",
+      reSendAuthNumStatus: false,
+      reSendAuthNumCount: 0,
     };
+  },
+  computed: {
+    convertTime() {
+      // NOTE: 초 단위를 분:초 형식으로 변환
+      let time = this.timeCounter / 60;
+      let minutes = parseInt(time);
+      let seconds = Math.round((time - minutes) * 60);
+      return `${this.pad(minutes, 2)}:${this.convertSeconds(seconds, 2)}}`;
+    },
   },
   methods: {
     login() {
@@ -138,13 +160,28 @@ export default {
           "$1-$2-$3"
         );
     },
-    // setHypenTel(value) {
-    //   this.user.tel = value;
-    //   console.log(this.user.tel);
-    //   console.log(value);
-    // },
-    onSubmit() {
-      // this will be called only after form is valid. You can do api call here to login
+    startTimer() {
+      this.polling = setInterval(() => {
+        this.timeCounter--;
+        this.remainingTime = this.convertTime();
+        if (this.timeCounter <= 0) this.stopTimer();
+      }, 1000);
+    },
+    stopTimer() {
+      clearInterval(this.polling);
+      alert("유효 시간이 만료되었습니다. 다시 시도해 주세요.");
+      this.authNumber = "";
+      this.reSendAuthNumStatus = false;
+      this.timeCounter = 180;
+    },
+    convertSeconds(sec, digit) {
+      // NOTE: digit 자릿수로 변환
+      sec = sec + "";
+      if (sec.length >= digit) {
+        return sec;
+      } else {
+        return new Array(digit - sec.length + 1).join("0") + sec;
+      }
     },
   },
 };
@@ -217,8 +254,8 @@ export default {
   background-position: center; */
 }
 .btn-wrapper .google-btn img {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
 }
 /* .btn-wrapper .kakao-btn img {
   width: 25px;
@@ -230,5 +267,35 @@ export default {
 .google-btn {
 }
 .kakao-btn {
+}
+.card .bg-transparent .signup-check-btn {
+  width: 105px;
+  background-color: #ffffff;
+  color: #8898aa;
+  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+  border: 0;
+  transition: box-shadow 0.15s ease;
+  padding: 0.625rem 0.25rem;
+  /* margin-left: 10px; */
+  /* margin-bottom: 1.5rem; */
+}
+.auth-num-check-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.auth-num-check-form span,
+.auth-num-check-form .form-group {
+  margin-bottom: 0 !important;
+}
+.auth-num-check-button-group {
+  display: flex;
+  margin-left: 10px;
+}
+.auth-num-check-form span {
+  width: 100%;
+}
+.auth-num-check-area {
+  margin-bottom: 1.5rem;
 }
 </style>

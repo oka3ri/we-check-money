@@ -160,8 +160,8 @@ export default {
   background-position: center; */
 }
 .btn-wrapper .google-btn img {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
 }
 .btn-wrapper .kakao-btn img {
   width: 25px;

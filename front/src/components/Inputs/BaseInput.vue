@@ -4,7 +4,7 @@
     v-bind="$attrs"
     v-slot="{ errors, valid, invalid, validated }")
     b-form-group
-      slot(name="label")
+      slot(name="label" v-if="!isTel")
         label(v-if="label" :class="labelClasses") {{ label }}
       div(:class="[{ 'input-group': hasIcon }, { focused: focused }, { 'input-group-alternative': alternative }, { 'has-label': label || $slots.label }, inputGroupClasses,]")
         .input-group-prepend(v-if="prependIcon || $slots.prepend")
@@ -25,17 +25,10 @@
             slot(name="append")
               i(:class="appendIcon")
         slot(name="infoBlock")
-      //- .signup-check(v-if="isIdOrNickname")
-        base-button.signup-check-btn 중복확인
-      .signup-check(v-if="isTel")
-        base-button.signup-check-btn 인증번호 받기
-        //- h3 {{ isIdOrNickname }}
-      //- .signup-check 중복확인
       slot(name="success")
         .valid-feedback(v-if="valid && validated && successMessage") {{ successMessage }}
       slot(name="error")
         .invalid-feedback(v-if="errors[0]" style="display: block") {{ errors[0] }}
-        //- .invalid-feedback(v-if="errors[0]" style="display: block") {{ errMsg(name) }}
 </template>
 <script>
 import { extend } from "vee-validate";
@@ -215,18 +208,4 @@ export default {
   },
 };
 </script>
-<style>
-.form-group div {
-  display: flex;
-}
-.card .form-group .signup-check .signup-check-btn {
-  width: 105px;
-  background-color: #ffffff;
-  color: #8898aa;
-  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
-  border: 0;
-  transition: box-shadow 0.15s ease;
-  padding: 0.625rem 0.25rem;
-  margin-left: 10px;
-}
-</style>
+<style></style>
