@@ -12,5 +12,7 @@ public interface AuthMapper {
     Integer insertSignUpUserAuthInfo(UserDto params) throws Exception;
     UserDto getUserInfo(UserDto params) throws Exception;
     Integer updateRefreshToken(UserDto params) throws Exception;
-    UserDto findUserInfoByLoginId(@Param("loginId") String loginId) throws UsernameNotFoundException;
+    Integer deleteRefreshToken(UserDto param) throws Exception;
+    UserDto findUserInfoByLoginId(@Param("loginId") String loginId) throws Exception;
+    UserDto findUserInfoByNickname(@Param("nickname") String nickname) throws UsernameNotFoundException;
 }

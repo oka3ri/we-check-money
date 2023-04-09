@@ -1,5 +1,6 @@
 package com.wecheck.security.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wecheck.common.properties.CommonProperties;
 import com.wecheck.app.user.dto.UserDto;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,11 +39,11 @@ public class JwtTokenProvider {
         this.tokenService = tokenService;
     }
 
-    public String createAccessToken(UserDto user) throws Exception {
-        // user객체 저장
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonUser = mapper.writeValueAsString(user);
-        Claims claims = Jwts.claims().setSubject(jsonUser); // JWT payload 에 저장되는 정보단위
+    public String createAccessToken(String userNickname) throws Exception {
+        // nickname 저장
+        //ObjectMapper mapper = new ObjectMapper();
+        //String jsonUser = mapper.writeValueAsString(user);
+        Claims claims = Jwts.claims().setSubject(userNickname); // JWT payload 에 저장되는 정보단위
         claims.put("roles", "ROLE_USER");
 
         Date now = new Date();
@@ -53,17 +55,17 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(UserDto user) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonUser = mapper.writeValueAsString(user);
-        Claims claims = Jwts.claims().setSubject(jsonUser);
+    public String createRefreshToken(String userNickname) throws Exception {
+//        ObjectMapper mapper = new ObjectMapper();
+//        String jsonUser = mapper.writeValueAsString(user);
+        Claims claims = Jwts.claims().setSubject(userNickname);
         claims.put("roles", "ROLE_USER");
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .signWith(SignatureAlgorithm.HS256, properties.getToken().getSecret())
-                .setExpiration(new Date(now.getTime() + properties.getToken().getAccessTokenExpireTime()))
+                .setExpiration(new Date(now.getTime() + properties.getToken().getRefreshTokenExpireTime()))
                 .compact();
     }
 
@@ -84,6 +86,15 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+    public String getTokenSubject(String token) throws Exception {
+        Claims claims = Jwts
+                .parser()
+                .setSigningKey(properties.getToken().getSecret())
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
     public boolean validateToken(String token) {
         logger.info("validateToken Method >> {} ", token);
         try {
@@ -95,13 +106,32 @@ public class JwtTokenProvider {
             }
             return true;
         } catch (MalformedJwtException e) {
-            logger.info("잘못된 JWT 서명입니다.");
+            logger.info("잘못된 Access Token 서명입니다.");
         } catch (ExpiredJwtException e) {
-            logger.info("만료된 JWT 토큰입니다.");
+            logger.info("만료된 Access Token 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            logger.info("지원되지 않는 JWT 토큰입니다.");
+            logger.info("지원되지 않는 Access Token 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            logger.info("JWT 토큰이 잘못되었습니다.");
+            logger.info("Access Token 토큰이 잘못되었습니다.");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean validateRefreshToken(String token) {
+        logger.info("validateToken Method >> {} ", token);
+        try {
+            Jwts.parser().setSigningKey(properties.getToken().getSecret()).parseClaimsJws(token);
+            return true;
+        } catch (MalformedJwtException e) {
+            logger.info("잘못된 Access Token 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            logger.info("만료된 Access Token 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            logger.info("지원되지 않는 Access Token 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            logger.info("Access Token 토큰이 잘못되었습니다.");
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -118,5 +148,12 @@ public class JwtTokenProvider {
         }
 
         return null;
+    }
+
+    public String resolveRefreshToken(HttpServletRequest request) {
+        // request header에서 refresh token정보 추출
+        String refreshToken = request.getHeader(properties.getToken().getRefreshTokenName());
+        logger.info("refreshToken >>> {} ", refreshToken);
+        return refreshToken;
     }
 }

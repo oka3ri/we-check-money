@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 
-@RequestMapping("/api")
+@RequestMapping("/auth")
 @RestController
 public class AuthController {
 
@@ -27,7 +27,7 @@ public class AuthController {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    @PostMapping("/auth/login/general")
+    @PostMapping("/login/general")
     public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) throws Exception{
         return authService.login(loginDto);
 
@@ -38,13 +38,13 @@ public class AuthController {
         return authService.insertSignUpUser(params);
     }
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/logout")
     public CommonResponse<?> logout(HttpServletRequest request) throws Exception {
         return  authService.logout(request);
     }
 
-    @GetMapping("/test/jwttoken")
-    public String testJwtToken() {
-        return "testJwt";
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDto> reissue(HttpServletRequest request) throws Exception {
+        return  authService.reissue(request);
     }
 }

@@ -17,6 +17,9 @@
     <update id="updateRefreshToken" parameterType="com.wecheck.app.user.dto.UserDto">
         UPDATE users SET refresh_token = #{refreshToken} WHERE user_id = #{userId}
     </update>
+    <update id="deleteRefreshToken" parameterType="com.wecheck.app.user.dto.UserDto">
+        UPDATE users SET refresh_token = "" WHERE user_id = #{userId}
+    </update>
     <select id="findUserInfoByLoginId" parameterType="String" resultType="com.wecheck.app.user.dto.UserDto">
         SELECT
             A.*,
@@ -25,5 +28,18 @@
         FROM user_auth A
         INNER JOIN users B ON B.user_id = A.user_id
         WHERE A.login_id = #{loginId}
+    </select>
+    <select id="findUserInfoByNickname" parameterType="String" resultType="com.wecheck.app.user.dto.UserDto">
+        SELECT
+            A.*,
+            B.login_id,
+            B.password,
+            B.phone,
+            C.external_id,
+            C.social_cdx
+        FROM users A
+        LEFT JOIN user_auth B ON B.user_id = A.user_id
+        LEFT JOIN social_auth C ON C.user_id = A.user_id
+        WHERE A.nickname = #{nickname}
     </select>
 </mapper>
