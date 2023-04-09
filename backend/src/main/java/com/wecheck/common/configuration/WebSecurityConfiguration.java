@@ -62,8 +62,7 @@ public class WebSecurityConfiguration {
                 .and()
                 // 접근권한 설정
                 .authorizeHttpRequests()
-                .antMatchers("/api/signup").permitAll()
-                .antMatchers("/api/auth/login/general").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

@@ -20,12 +20,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String loginId) throws UsernameNotFoundException{
-        UserDto user = authMapper.findUserInfoByLoginId(loginId);
+    public UserDetails loadUserByUsername(final String nickname) throws UsernameNotFoundException{
+        UserDto user = authMapper.findUserInfoByNickname(nickname);
         if(user == null) {
             throw new CustomException("해당 사용자 정보가 없습니다.");
         }
         return UserDetailsDto.build(user);
     }
-
 }

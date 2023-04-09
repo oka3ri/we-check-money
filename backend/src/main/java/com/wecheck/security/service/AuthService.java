@@ -44,8 +44,8 @@ public class AuthService {
             throw new CustomException("해당 사용자 정보가 존재하지 않습니다.");
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user);
-        String refreshToken = jwtTokenProvider.createRefreshToken(user);
+        String accessToken = jwtTokenProvider.createAccessToken(user.getNickname());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getNickname());
         logger.info("jwt >>>> {} ", accessToken);
         user.setRefreshToken(refreshToken);
         authMapper.updateRefreshToken(user);
@@ -54,7 +54,7 @@ public class AuthService {
         httpHeaders.add(properties.getToken().getAccessTokenName(), "Bearer " + accessToken);
         logger.info("httpHeaders >>> {} ", httpHeaders.toString());
 
-        return new ResponseEntity<>(TokenDto.builder().accessToken(accessToken).build(), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build(), httpHeaders, HttpStatus.OK);
 
     }
 
@@ -65,6 +65,39 @@ public class AuthService {
         tokenMapper.insertTokenInBlackList(accessToken);
 
         return CommonResponse.of(true, Optional.empty());
+
+    }
+
+    public ResponseEntity<TokenDto> reissue(HttpServletRequest servletRequest) throws Exception {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        // refreshToken 추출
+        String refreshToken = jwtTokenProvider.resolveRefreshToken(httpServletRequest);
+        logger.info("debugging >> refreshtoken >> {}", refreshToken);
+        // refreshToken user Nickname 추출
+        String nickname = jwtTokenProvider.getTokenSubject(refreshToken);
+        // DB의 refreshToken값과 비교
+        UserDto user = authMapper.findUserInfoByNickname(nickname);
+        if(user == null) {
+            throw new CustomException("해당 사용자 정보가 존재하지 않습니다.");
+        }
+        if(user.getRefreshToken() == null) {
+            logger.info("refresh-token is null");
+            throw new CustomException("refresh-token is null");
+        }
+        // check refresh token validate
+        if(!jwtTokenProvider.validateRefreshToken(user.getRefreshToken())) {
+            logger.info("기간 만료된 refresh token");
+            // refresh token 삭제
+            authMapper.deleteRefreshToken(user);
+            throw new CustomException("expire refresh-token");
+        }
+
+        String reissueAccessToken = jwtTokenProvider.createAccessToken(user.getNickname());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(properties.getToken().getAccessTokenName(), "Bearer " + reissueAccessToken);
+        logger.info("httpHeaders >>> {} ", httpHeaders.toString());
+
+        return new ResponseEntity<>(TokenDto.builder().accessToken(reissueAccessToken).build(), httpHeaders, HttpStatus.OK);
 
     }
 
@@ -87,8 +120,8 @@ public class AuthService {
             success = (result != null);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(result);
-        String refreshToken = jwtTokenProvider.createRefreshToken(result);
+        String accessToken = jwtTokenProvider.createAccessToken(result.getNickname());
+        String refreshToken = jwtTokenProvider.createRefreshToken(result.getNickname());
         logger.info("jwt >>>> {} ", accessToken);
         result.setRefreshToken(refreshToken);
         authMapper.updateRefreshToken(result);
