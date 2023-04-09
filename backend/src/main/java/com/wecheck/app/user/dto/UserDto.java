@@ -25,5 +25,6 @@ public class UserDto {
     private String phone;
     private String externalId;
     private Long socialCdx;
+    private String refreshToken;
     private List<String> roles = Collections.emptyList();
 }

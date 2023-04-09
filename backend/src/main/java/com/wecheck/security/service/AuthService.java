@@ -130,7 +130,7 @@ public class AuthService {
         httpHeaders.add(properties.getToken().getAccessTokenName(), "Bearer " + accessToken);
         logger.info("httpHeaders >>> {} ", httpHeaders.toString());
 
-        return new ResponseEntity<>(TokenDto.builder().accessToken(accessToken).build(), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build(), httpHeaders, HttpStatus.OK);
 
     }
 }
