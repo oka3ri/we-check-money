@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wecheck.security.mapper.TokenMapper">
+    <insert id="insertTokenInBlackList" parameterType="String">
+        INSERT INTO token_blacklist (access_token) VALUES(#{token})
+    </insert>
+    <select id="isBlackListAccessToken" parameterType="String" resultType="int">
+        SELECT COUNT(0) FROM token_blacklist WHERE access_token = #{token}
+    </select>
+</mapper>
