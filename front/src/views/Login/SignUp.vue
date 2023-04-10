@@ -30,19 +30,28 @@ div
               small 일반 회원으로 가입하기
             validation-observer(v-slot="{handleSubmit}" ref="formValidator")
               b-form
-                base-input.mb-3(alternative name="id" required="duplicateId" :rules="idRule" prepend-icon="ni ni-single-02" type="text" placeholder="아이디" v-model="user.id")
+                base-input.mb-3(alternative name="id" :rules="idRule" prepend-icon="ni ni-single-02" type="text" placeholder="아이디" v-model="user.id" @blur='blurTest')
                 //- base-input.mb-3(alternative name="pw" prepend-icon="ni ni-single-02" placeholder="닉네임" v-model="user.nickname")
-                base-input.mb-3(alternative name="nickname" :rules="nameRule" prepend-icon="ni ni-badge" type="text" placeholder="닉네임" v-model="user.nickname")
+                base-input.mb-3(alternative name="nickname" :rules="nicknameRule" prepend-icon="ni ni-badge" type="text" placeholder="닉네임" v-model="user.nickname" @blur='blurTest')
 
-                base-input.mb-3(alternative name="tel" :rules="telRule" prepend-icon="ni ni-mobile-button" type="tel" placeholder="전화번호" maxlength="13" v-model="user.tel" @input="ChangeHipenTel($event)")
+                base-input.mb-3(alternative name="tel" ref="telInput" :rules="telRule" prepend-icon="ni ni-mobile-button" type="tel" placeholder="전화번호" maxlength="13" v-model="user.tel" @input="ChangeHipenTel($event)" @valid='checkTelValid')
                 
-                .auth-num-check-area
+                //- .auth-num-check-area(v-if="telValid")
+                .auth-num-check-area(v-if="true")
                   .auth-num-check-form
-                    base-input.mb-3(alternative name="auth-number" prepend-icon="ni ni-key-25" type="text" placeholder="인증번호" maxlength="6" v-model="authNumber" )
-                    .auth-num-check-button-group
-                      //- base-button.signup-check-btn 인증번호 받기
-                      base-button.signup-check-btn 인증하기
-                  //- .invalid-feedback(style="display: block;") 인증번호를 입력해주세요
+                    base-input.mb-3(alternative name="auth-number" prepend-icon="ni ni-key-25" type="text" placeholder="인증번호" maxlength="6" v-model="authNumber")
+                .auth-num-check-area
+                  .auth-num-check-button-group
+                    base-button.signup-check-btn(v-if="!sendAuthNumStatus" @click='sendAuthNumber()') 인증번호 받기
+                    base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 재전송
+                    base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 인증하기
+                    //- .auth-num-check-button-group
+                    //-   base-button.signup-check-btn(v-if="!sendAuthNumStatus" @click='sendAuthNumber()') 인증번호 받기
+                    //-   base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 재전송
+                    //-   base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 인증하기
+                      //- base-button.signup-check-btn(@click='test()') 전송하기
+                      //- base-button.signup-check-btn(@click='test()') 인증하기
+                  //- .invalid-feedback(style="display: block;") 2:59
 
                 base-input.mb-3(alternative name="pw" :rules="pwdRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="user.password")
                 base-input.mb-3(alternative name="pw-confirm" required="confirmed:password" :rules="pwdConfirmRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호 확인" v-model="user.passwordConfirm")
@@ -85,13 +94,14 @@ export default {
       },
       idRule: {
         required: true,
-        duplicateId: "",
+        duplicated: 0,
         // min: 6,
         // max: 12,
         regex: /^[a-z]{1}[a-z0-9]{5,11}$/,
       },
-      nameRule: {
+      nicknameRule: {
         required: true,
+        duplicated: 0,
         // min: 2,
         // max: 10,
         regex: /^[가-힣]{2,10}$/,
@@ -119,8 +129,11 @@ export default {
       authNumber: "",
       timeCounter: 180,
       remainingTime: "",
+      sendAuthNumStatus: false,
       reSendAuthNumStatus: false,
       reSendAuthNumCount: 0,
+      telValid: false,
+      duplicateId: false,
     };
   },
   computed: {
@@ -133,6 +146,29 @@ export default {
     },
   },
   methods: {
+    sendAuthNumber() {
+      // TODO: 인증번호 요청
+      this.sendAuthNumStatus = true;
+    },
+    blurTest(evt, type) {
+      // NOTE: 0=중복아님 | 1=중복
+      if (evt.target.classList.length === 1) {
+        if (type == "id") {
+          // TODO: 아이디 중복 검사 API 요청
+          // this.idRule.duplicated = 0;
+        } else if (type == "nickname") {
+          // TODO: 닉네임 중복 검사 API 요청
+          // this.nicknameRule.duplicated = 1;
+        }
+      }
+    },
+    test() {
+      this.idRule.duplicated = 2;
+      // console.log(this.$refs.telInput);
+    },
+    checkTelValid(valid) {
+      this.telValid = valid;
+    },
     login() {
       if (this.user.id == "") {
         alert("아이디를 입력해 주세요.");
@@ -278,6 +314,9 @@ export default {
   padding: 0.625rem 0.25rem;
   /* margin-left: 10px; */
   /* margin-bottom: 1.5rem; */
+}
+.card .bg-transparent .second-tab-btn {
+  width: 75px;
 }
 .auth-num-check-form {
   display: flex;

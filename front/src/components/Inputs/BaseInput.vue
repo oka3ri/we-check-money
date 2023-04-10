@@ -4,7 +4,7 @@
     v-bind="$attrs"
     v-slot="{ errors, valid, invalid, validated }")
     b-form-group
-      slot(name="label" v-if="!isTel")
+      slot(name="label")
         label(v-if="label" :class="labelClasses") {{ label }}
       div(:class="[{ 'input-group': hasIcon }, { focused: focused }, { 'input-group-alternative': alternative }, { 'has-label': label || $slots.label }, inputGroupClasses,]")
         .input-group-prepend(v-if="prependIcon || $slots.prepend")
@@ -12,14 +12,18 @@
             slot(name="prepend")
               i(:class="prependIcon")
         slot(v-bind="slotData")
-          input.form-control(:value="value"
+          input.form-control(
+            :value="value"
             :type="type"
             v-on="listeners"
             v-bind="$attrs"
             :valid="valid"
             :required="required"
             :class="[{ 'is-valid': valid && validated && successMessage }, { 'is-invalid': invalid && validated }, inputClasses,]"
-            :maxlength="maxlength")
+            :maxlength="maxlength"
+            :disabled="!disabled"
+            @input="checkTelValid(valid)"
+          )
         .input-group-append(v-if="appendIcon || $slots.append")
           span.input-group-text
             slot(name="append")
@@ -106,6 +110,10 @@ export default {
     maxlength: {
       type: String,
     },
+    disabled: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -113,8 +121,6 @@ export default {
     };
   },
   computed: {
-    // err 문구 prop 받아서 문구 return
-    // TODO: error를 원하는 케이스에 따라 사용 가능한지 확인 및 체크 (현재 이메일인지 유효성 체크)
     listeners() {
       return {
         ...this.$listeners,
@@ -140,14 +146,6 @@ export default {
         this.group
       );
     },
-    isIdOrNickname() {
-      if (this.name == "id" || this.name == "nickname") return true;
-      return false;
-    },
-    isTel() {
-      if (this.name == "tel") return true;
-      return false;
-    },
   },
   methods: {
     updateValue(evt) {
@@ -160,22 +158,22 @@ export default {
     },
     onBlur(evt) {
       this.focused = false;
-      this.$emit("blur", evt);
+      this.$emit("blur", evt, this.name);
+    },
+    checkTelValid(valid) {
+      if (this.name == "tel") {
+        this.$emit("valid", valid);
+      }
     },
   },
   created() {
-    extend("duplicateId", {
-      validate(value, args) {
-        // 체크 로직
-        // TODO: 아이디 중복 확인 API 요청
-        // 매개변수에 따라 id와 nickname을 여기서 다 처리할 수 있는지 확인 필요
-        return true;
-      },
-      message: "이미 존재하거나 탈퇴한 아이디입니다.",
-    });
     extend("required", {
       ...this.required,
-      message: "필수 입력항목입니다.",
+      message: (field) => {
+        if (field == "auth-number") return;
+        return "필수 입력항목입니다.";
+      },
+      // message: "필수 입력항목입니다.",
     });
     extend("regex", {
       ...this.rules.regex,
@@ -195,16 +193,22 @@ export default {
         }
       },
     });
-    //   extend("regex", {
-    //     validate(value, this.rules.regex ) {
-    //   return value.length >= min && value.length <= max;
-    // },
-    //     message: (field, value) => {
-    //       if (field == 'id') {
-    //         return "6~12자의 영문 소문자, 숫자만 사용 가능합니다."
-    //       }
-    //     }
-    //   });
+    extend("duplicated", {
+      validate(value, args) {
+        // NOTE: args == 0: 중복 아님 | args == 1: 중복
+        if (args[0]) {
+          return false;
+        }
+        return true;
+      },
+      message: (field) => {
+        if (field == "id") {
+          return "이미 존재하거나 탈퇴한 아이디입니다.";
+        } else if (field == "nickname") {
+          return "이미 존재하는 닉네임입니다.";
+        }
+      },
+    });
   },
 };
 </script>
