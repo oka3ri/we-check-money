@@ -40,9 +40,10 @@ div
                 .auth-num-check-area(v-if="true")
                   .auth-num-check-form
                     base-input.mb-3(alternative name="auth-number" prepend-icon="ni ni-key-25" type="text" placeholder="인증번호" maxlength="6" v-model="authNumber")
+                    .auth-num-check-button-group(v-if="!sendAuthNumStatus")  
+                      base-button.signup-check-btn(@click='sendAuthNumber()') 인증번호 받기
                 .auth-num-check-area
                   .auth-num-check-button-group
-                    base-button.signup-check-btn(v-if="!sendAuthNumStatus" @click='sendAuthNumber()') 인증번호 받기
                     base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 재전송
                     base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 인증하기
                     //- .auth-num-check-button-group
