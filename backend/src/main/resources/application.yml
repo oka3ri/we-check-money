@@ -8,9 +8,9 @@ spring:
         cache: true
   datasource:
     hikari:
-      jdbc-url: #jdbc-url
-      username: #username
-      password: #password
+      jdbc-url:
+      username:
+      password:
       driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
@@ -19,7 +19,7 @@ server:
     session:
       timeout: 7200
       cookie:
-        name: #cookie-name
+        name:
     encoding:
       charset: UTF-8
     context-path: /
@@ -30,12 +30,12 @@ server:
       enabled: false
     path: /error
 
-# ??? ??
+# 사용자설정
 properties:
   common:
     security:
       ignores: /css/**, /fonts/**, /img/**, /js/**
-      permit-alls: /api/user/join, /api/jwt/login
+      permit-alls: /auth/**, /oauth2/**
       redirect-url: /
       iframe-option: disable #disable, same-origin, deny
       cors:
@@ -45,9 +45,9 @@ properties:
         allowed-headers: "*" #Context-Type, ...
       same-site: Lax #None, Lax, Strict
     token:
-      access-token-name: #access token name
-      refresh-token-name: #refresh token name
+      prefix:
+      token-name:
       access-token-expire-time: 1800000 #30분
       #access-token-expire-time: 60000 # for test: 1분
       refresh-token-expire-time: 604800000 #7일
-      secret: #jwt token secret key
+      secret:
