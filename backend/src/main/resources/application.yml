@@ -1,0 +1,53 @@
+
+spring:
+  web:
+    locale: ko
+    resources:
+      chain:
+        compressed: true
+        cache: true
+  datasource:
+    hikari:
+      jdbc-url: #jdbc-url
+      username: #username
+      password: #password
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 9090
+  servlet:
+    session:
+      timeout: 7200
+      cookie:
+        name: #cookie-name
+    encoding:
+      charset: UTF-8
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+  error:
+    whitelabel:
+      enabled: false
+    path: /error
+
+# ??? ??
+properties:
+  common:
+    security:
+      ignores: /css/**, /fonts/**, /img/**, /js/**
+      permit-alls: /api/user/join, /api/jwt/login
+      redirect-url: /
+      iframe-option: disable #disable, same-origin, deny
+      cors:
+        pattern: /** #/auth/**
+        allowed-origins: "*"
+        allowed-methods: "*" #PUT,DELETE,GET,POST ...
+        allowed-headers: "*" #Context-Type, ...
+      same-site: Lax #None, Lax, Strict
+    token:
+      access-token-name: #access token name
+      refresh-token-name: #refresh token name
+      access-token-expire-time: 1800000 #30분
+      #access-token-expire-time: 60000 # for test: 1분
+      refresh-token-expire-time: 604800000 #7일
+      secret: #jwt token secret key
