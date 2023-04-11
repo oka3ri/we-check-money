@@ -2,10 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.wecheck.security.mapper.TokenMapper">
-    <insert id="insertTokenInBlackList" parameterType="String">
-        INSERT INTO token_blacklist (access_token) VALUES(#{token})
+    <insert id="insertTokenInBlackList" parameterType="java.util.Map">
+        INSERT INTO token_blacklist (access_token, expired_date) VALUES(#{accessToken}, #{expiredDate})
     </insert>
     <select id="isBlackListAccessToken" parameterType="String" resultType="int">
         SELECT COUNT(0) FROM token_blacklist WHERE access_token = #{token}
     </select>
+    <select id="getUserRefreshToken" parameterType="Long" resultType="com.wecheck.security.dto.RefreshTokenDto">
+        SELECT * FROM user_refresh_token WHERE user_id = #{userId}
+    </select>
+    <insert id="insertUserRefreshToken" parameterType="com.wecheck.security.dto.RefreshTokenDto">
+        INSERT INTO user_refresh_token (refresh_token, user_id, expired_date) VALUES(#{refreshToken}, #{userId}, #{expiredDate})
+    </insert>
+    <delete id="deleteUserRefreshToken" parameterType="com.wecheck.security.dto.RefreshTokenDto">
+        DELETE FROM user_refresh_token WHERE user_id = #{userId}
+    </delete>
 </mapper>

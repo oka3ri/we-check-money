@@ -1,10 +1,12 @@
 package com.wecheck.common.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wecheck.common.properties.CommonProperties;
 import com.wecheck.security.jwt.JwtAccessDeniedHandler;
 import com.wecheck.security.jwt.JwtAuthenticationEntryPoint;
 import com.wecheck.security.jwt.JwtFilter;
 import com.wecheck.security.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfiguration {
 
@@ -30,17 +33,16 @@ public class WebSecurityConfiguration {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    public WebSecurityConfiguration(CommonProperties properties, JwtTokenProvider jwtTokenProvider
-            , JwtAccessDeniedHandler jwtAccessDeniedHandler, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
-        this.properties = properties;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web.ignoring().antMatchers(properties.getSecurity().getIgnores()));
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -62,16 +64,12 @@ public class WebSecurityConfiguration {
                 .and()
                 // 접근권한 설정
                 .authorizeHttpRequests()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers(properties.getSecurity().getPermitAlls()).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                // jwt token filter 설정
+                // jwt filter 설정
                 .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-                // logout
-//                .logout()
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
-//                .clearAuthentication(true);
 //
 //        // iframe option
 //        switch (properties.getSecurity().getIframeOption()) {
@@ -102,11 +100,6 @@ public class WebSecurityConfiguration {
         source.registerCorsConfiguration(properties.getSecurity().getCors().getPattern(), configuration);
 
         return source;
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
 }

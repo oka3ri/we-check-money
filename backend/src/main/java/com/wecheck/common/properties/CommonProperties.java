@@ -28,8 +28,8 @@ public class CommonProperties {
     @Data
     @ConfigurationProperties(prefix = "token")
     public static class TokenProperties {
-        private String accessTokenName;
-        private String refreshTokenName;
+        private String prefix;
+        private String tokenName;
         private Long accessTokenExpireTime;
         private Long refreshTokenExpireTime;
         private String secret;
