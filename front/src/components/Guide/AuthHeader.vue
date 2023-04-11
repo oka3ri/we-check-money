@@ -3,7 +3,7 @@
   base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu" :transparent="true" menu-classes="justify-content-end" expand="lg")
     .navbar-wrapper
       //- b-navbar-brand(to="/")
-      a.navbar-brand.active(href="#" target="_self" @click="$_goTo({name: 'login'})")
+      a.navbar-brand.active(@click="$_goTo({name: 'login'})")
         img.header-logo(src="img/brand/white.png")
       //- .navbar-collapse-header
         b-row

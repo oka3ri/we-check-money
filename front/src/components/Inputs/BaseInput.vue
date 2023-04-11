@@ -6,7 +6,7 @@
     b-form-group
       slot(name="label")
         label(v-if="label" :class="labelClasses") {{ label }}
-      div(:class="[{ 'input-group': hasIcon }, { focused: focused }, { 'input-group-alternative': alternative }, { 'has-label': label || $slots.label }, inputGroupClasses,]")
+      div(:class="[{ 'input-group': hasIcon }, { focused: focused }, { 'input-group-alternative': alternative }, { 'has-label': label || $slots.label }, inputGroupClasses, { 'input-disabled': !disabled }]")
         .input-group-prepend(v-if="prependIcon || $slots.prepend")
           span.input-group-text
             slot(name="prepend")
@@ -28,6 +28,8 @@
           span.input-group-text
             slot(name="append")
               i(:class="appendIcon")
+        //- .input-group-timer(v-if="timer !== ''")
+        h3.input-group-timer(v-if="timer.status") {{ timer.time }}
         slot(name="infoBlock")
       slot(name="success")
         .valid-feedback(v-if="valid && validated && successMessage") {{ successMessage }}
@@ -113,6 +115,16 @@ export default {
     disabled: {
       type: Boolean,
       default: true,
+    },
+    timer: {
+      type: Object,
+      description: "유효시간 표시",
+      default: () => {
+        return {
+          status: false,
+          time: "",
+        };
+      },
     },
   },
   data() {
@@ -212,4 +224,23 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.input-group-timer {
+  /* line-height: 43px; */
+  font-size: 14px;
+  margin: 0;
+  margin-right: 10px;
+  color: #8898aa;
+  font-weight: normal;
+}
+.form-group .input-group {
+  align-items: center;
+  background-color: #fff;
+}
+.form-group .input-disabled {
+  background-color: #e9ecef;
+}
+.form-group .input-disabled .input-group-text {
+  background-color: #e9ecef;
+}
+</style>

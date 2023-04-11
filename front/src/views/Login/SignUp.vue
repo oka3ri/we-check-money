@@ -31,29 +31,16 @@ div
             validation-observer(v-slot="{handleSubmit}" ref="formValidator")
               b-form
                 base-input.mb-3(alternative name="id" :rules="idRule" prepend-icon="ni ni-single-02" type="text" placeholder="아이디" v-model="user.id" @blur='blurTest')
-                //- base-input.mb-3(alternative name="pw" prepend-icon="ni ni-single-02" placeholder="닉네임" v-model="user.nickname")
                 base-input.mb-3(alternative name="nickname" :rules="nicknameRule" prepend-icon="ni ni-badge" type="text" placeholder="닉네임" v-model="user.nickname" @blur='blurTest')
-
-                base-input.mb-3(alternative name="tel" ref="telInput" :rules="telRule" prepend-icon="ni ni-mobile-button" type="tel" placeholder="전화번호" maxlength="13" v-model="user.tel" @input="ChangeHipenTel($event)" @valid='checkTelValid')
-                
-                //- .auth-num-check-area(v-if="telValid")
-                .auth-num-check-area(v-if="true")
+                base-input.mb-3(alternative name="tel" ref="telInput" :rules="telRule" prepend-icon="ni ni-mobile-button" type="tel" placeholder="전화번호" maxlength="13" v-model="user.tel" @input="ChangeHipenTel($event)" @valid='checkTelValid' :disabled="!sendAuthNumStatus")
+                .auth-num-check-area(v-if="telValid")
                   .auth-num-check-form
-                    base-input.mb-3(alternative name="auth-number" prepend-icon="ni ni-key-25" type="text" placeholder="인증번호" maxlength="6" v-model="authNumber")
+                    base-input.mb-3(alternative name="auth-number" prepend-icon="ni ni-key-25" type="text" placeholder="인증번호" maxlength="6" v-model="authNumber" :timer='timerOption')
                     .auth-num-check-button-group(v-if="!sendAuthNumStatus")  
                       base-button.signup-check-btn(@click='sendAuthNumber()') 인증번호 받기
-                .auth-num-check-area
-                  .auth-num-check-button-group
-                    base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 재전송
-                    base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 인증하기
-                    //- .auth-num-check-button-group
-                    //-   base-button.signup-check-btn(v-if="!sendAuthNumStatus" @click='sendAuthNumber()') 인증번호 받기
-                    //-   base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 재전송
-                    //-   base-button.signup-check-btn.second-tab-btn(v-if="sendAuthNumStatus") 인증하기
-                      //- base-button.signup-check-btn(@click='test()') 전송하기
-                      //- base-button.signup-check-btn(@click='test()') 인증하기
-                  //- .invalid-feedback(style="display: block;") 2:59
-
+                    .auth-num-check-button-group(v-else)
+                      base-button.signup-check-btn.second-tab-btn 재전송
+                      base-button.signup-check-btn.second-tab-btn 인증하기
                 base-input.mb-3(alternative name="pw" :rules="pwdRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호" v-model="user.password")
                 base-input.mb-3(alternative name="pw-confirm" required="confirmed:password" :rules="pwdConfirmRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호 확인" v-model="user.passwordConfirm")
                 //- b-form-checkbox(v-model="user.rememberMe") Remember me
@@ -129,26 +116,33 @@ export default {
       },
       authNumber: "",
       timeCounter: 180,
-      remainingTime: "",
       sendAuthNumStatus: false,
-      reSendAuthNumStatus: false,
       reSendAuthNumCount: 0,
       telValid: false,
       duplicateId: false,
     };
   },
   computed: {
-    convertTime() {
+    remainingTime() {
       // NOTE: 초 단위를 분:초 형식으로 변환
       let time = this.timeCounter / 60;
       let minutes = parseInt(time);
       let seconds = Math.round((time - minutes) * 60);
-      return `${this.pad(minutes, 2)}:${this.convertSeconds(seconds, 2)}}`;
+      return `${this.convertTime(minutes, 2)}:${this.convertTime(seconds, 2)}`;
+    },
+    timerOption() {
+      let option = {
+        status: this.sendAuthNumStatus,
+        time: this.remainingTime,
+      };
+      return option;
     },
   },
   methods: {
     sendAuthNumber() {
       // TODO: 인증번호 요청
+      this.$alert("인증번호가 전송되었습니다.", "", "success");
+      this.startTimer();
       this.sendAuthNumStatus = true;
     },
     blurTest(evt, type) {
@@ -162,10 +156,6 @@ export default {
           // this.nicknameRule.duplicated = 1;
         }
       }
-    },
-    test() {
-      this.idRule.duplicated = 2;
-      // console.log(this.$refs.telInput);
     },
     checkTelValid(valid) {
       this.telValid = valid;
@@ -200,18 +190,21 @@ export default {
     startTimer() {
       this.polling = setInterval(() => {
         this.timeCounter--;
-        this.remainingTime = this.convertTime();
         if (this.timeCounter <= 0) this.stopTimer();
       }, 1000);
     },
     stopTimer() {
       clearInterval(this.polling);
-      alert("유효 시간이 만료되었습니다. 다시 시도해 주세요.");
+      this.$alert(
+        "유효 시간이 만료되었습니다. 다시 시도해 주세요.",
+        "",
+        "error"
+      );
+      this.sendAuthNumStatus = false;
       this.authNumber = "";
-      this.reSendAuthNumStatus = false;
       this.timeCounter = 180;
     },
-    convertSeconds(sec, digit) {
+    convertTime(sec, digit) {
       // NOTE: digit 자릿수로 변환
       sec = sec + "";
       if (sec.length >= digit) {
@@ -221,121 +214,20 @@ export default {
       }
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+    this.timeCounter = 180;
+  },
 };
 </script>
 <style>
-.highlight-info-txt {
-  font-weight: 700;
-  font-size: 18px;
-  /* color: #ffff7e; */
-}
-.card .card-body {
-  padding-top: 5px;
-}
-.card-body .mb-3 {
-  margin-top: 0 !important;
-}
-.card .btn {
-  width: 100%;
-}
-.btn-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-/*
-.btn-wrapper .btn {
-  width: 100%;
-  margin-bottom: 5px;
-}
-.btn-wrapper a.btn {
-  padding: 0;
-  display: flex;
-}
-.btn-wrapper .btn-inner--text {
-  width: 100%;
-}
-.naver-wrapper {
-  background-color: #03c75a;
-}
-.kakao-wrapper {
-  background-color: #ffeb00;
-} */
-.btn-wrapper .social-login-btn {
-  width: 45px;
-  height: 45px;
-  border-radius: 100%;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.btn-wrapper .naver-btn {
-  background-color: #03c75a;
-}
-.btn-wrapper .google-btn {
-  background-color: #fff;
-  border: 1px solid #e6e6e6;
-}
-.btn-wrapper .kakao-btn {
-  overflow: hidden;
-  background-color: #ffeb00;
-}
-.btn-wrapper .social-login-btn img {
-  width: 30px;
-  /* vertical-align: top;
-  width: 38px;
-  height: 38px;
-  border-radius: 100%;
-  border: none;
-  background-position: center; */
-}
-.btn-wrapper .google-btn img {
-  width: 25px;
-  height: 25px;
-}
-/* .btn-wrapper .kakao-btn img {
-  width: 25px;
-} */
-.naver-btn,
-.kakao-btn {
-  margin-right: 10px;
-}
-.google-btn {
-}
-.kakao-btn {
-}
-.card .bg-transparent .signup-check-btn {
-  width: 105px;
-  background-color: #ffffff;
-  color: #8898aa;
-  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
-  border: 0;
-  transition: box-shadow 0.15s ease;
-  padding: 0.625rem 0.25rem;
-  /* margin-left: 10px; */
-  /* margin-bottom: 1.5rem; */
-}
-.card .bg-transparent .second-tab-btn {
-  width: 75px;
-}
-.auth-num-check-form {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.auth-num-check-form span,
-.auth-num-check-form .form-group {
-  margin-bottom: 0 !important;
-}
-.auth-num-check-button-group {
-  display: flex;
-  margin-left: 10px;
-}
-.auth-num-check-form span {
-  width: 100%;
-}
-.auth-num-check-area {
-  margin-bottom: 1.5rem;
+@media (max-width: 376px) {
+  .auth-num-check-form {
+    flex-wrap: wrap;
+  }
+  .auth-num-check-button-group {
+    margin: 0;
+    margin-top: 10px;
+  }
 }
 </style>

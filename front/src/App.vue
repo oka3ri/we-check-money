@@ -1,6 +1,6 @@
 <template lang="pug">
 #app.main-content.bg-default
-  auth-header
+  auth-header(v-if="isAuthArea")
   .main-content
     zoom-center-transition(:duration="pageTransitionDuration" mode="out-in")
       router-view
@@ -17,6 +17,15 @@ export default {
     AuthHeader,
     AuthFooter,
   },
+  computed: {
+    isAuthArea() {
+      let authPages = ["login", "signup"];
+      if (authPages.includes(this.$route.name)) {
+        return true;
+      }
+      return false;
+    },
+  },
   data() {
     return {
       pageTransitionDuration: 200,
@@ -24,3 +33,6 @@ export default {
   },
 };
 </script>
+<style>
+@import "./assets/css/main.css";
+</style>

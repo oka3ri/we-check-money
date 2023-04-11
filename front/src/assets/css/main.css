@@ -1,0 +1,80 @@
+.highlight-info-txt {
+  font-weight: 700;
+  font-size: 18px;
+}
+.card .card-body {
+  padding-top: 5px;
+}
+.card-body .mb-3 {
+  margin-top: 0 !important;
+}
+.card .btn {
+  width: 100%;
+}
+.btn-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.btn-wrapper .social-login-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 100%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-wrapper .naver-btn {
+  background-color: #03c75a;
+}
+.btn-wrapper .google-btn {
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+}
+.btn-wrapper .kakao-btn {
+  overflow: hidden;
+  background-color: #ffeb00;
+}
+.btn-wrapper .social-login-btn img {
+  width: 30px;
+}
+.btn-wrapper .google-btn img {
+  width: 25px;
+  height: 25px;
+}
+.naver-btn,
+.kakao-btn {
+  margin-right: 10px;
+}
+.card .bg-transparent .signup-check-btn {
+  width: 105px;
+  background-color: #ffffff;
+  color: #8898aa;
+  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+  border: 0;
+  transition: box-shadow 0.15s ease;
+  padding: 0.625rem 0.25rem;
+}
+.card .bg-transparent .second-tab-btn {
+  width: 75px;
+}
+.auth-num-check-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.auth-num-check-form span,
+.auth-num-check-form .form-group {
+  margin-bottom: 0 !important;
+}
+.auth-num-check-button-group {
+  display: flex;
+  margin-left: 10px;
+}
+.auth-num-check-form span {
+  width: 100%;
+}
+.auth-num-check-area {
+  margin-bottom: 1.5rem;
+}
