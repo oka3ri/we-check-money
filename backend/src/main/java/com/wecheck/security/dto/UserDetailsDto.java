@@ -17,9 +17,6 @@ import java.util.Collection;
 public class UserDetailsDto implements UserDetails {
     private UserDto userDto;
 
-    //private Authority authority;
-    //private Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -57,8 +54,5 @@ public class UserDetailsDto implements UserDetails {
 
     public static UserDetailsDto build(UserDto user) {
         return new UserDetailsDto(user);
-    }
-    public UserDto getUserDtoFromUserDetailDto() {
-        return this.userDto;
     }
 }
