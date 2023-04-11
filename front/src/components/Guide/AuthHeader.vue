@@ -1,27 +1,27 @@
 <template lang="pug">
-.main-content.bg-default
-  base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu" :transparent="true" menu-classes="justify-content-end" expand="lg")
-    .navbar-wrapper
-      //- b-navbar-brand(to="/")
-      a.navbar-brand.active(@click="$_goTo({name: 'login'})")
-        img.header-logo(src="img/brand/white.png")
-      //- .navbar-collapse-header
-        b-row
-          b-col.collapse-brand(cols="6")
-            router-link(to="/")
-              img(src="img/brand/green.png")
-          b-col.collapse-close(cols="6")
-            button.navbar-toggler(type="button" @click="showMenu = false")
-              span
-              span
-    //- b-navbar-nav.align-items-lg-center.ml-lg-auto
-    ul.navbar-nav.align-items-lg-center.ml-lg-auto
-      b-nav-item(@click="$_goTo({name: 'signup'})")
-        i.ni.ni-circle-08
-        span.nav-link-inner--text 회원가입
-      b-nav-item(@click="$_goTo({name: 'login'})")
-        i.ni.ni-key-25
-        span.nav-link-inner--text 로그인
+//- .bg-default
+base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu" :transparent="true" menu-classes="justify-content-end" expand="lg")
+  .navbar-wrapper
+    //- b-navbar-brand(to="/")
+    a.navbar-brand.active(@click="$_goTo({name: 'login'})")
+      img.header-logo(src="img/brand/white.png")
+    //- .navbar-collapse-header
+      b-row
+        b-col.collapse-brand(cols="6")
+          router-link(to="/")
+            img(src="img/brand/green.png")
+        b-col.collapse-close(cols="6")
+          button.navbar-toggler(type="button" @click="showMenu = false")
+            span
+            span
+  //- b-navbar-nav.align-items-lg-center.ml-lg-auto
+  ul.navbar-nav.align-items-lg-center.ml-lg-auto
+    b-nav-item(@click="$_goTo({name: 'signup'})")
+      i.ni.ni-circle-08
+      span.nav-link-inner--text 회원가입
+    b-nav-item(@click="$_goTo({name: 'login'})")
+      i.ni.ni-key-25
+      span.nav-link-inner--text 로그인
 </template>
 <script>
 import { BaseNav } from "@/components";

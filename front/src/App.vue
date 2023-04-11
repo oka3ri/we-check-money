@@ -1,21 +1,24 @@
 <template lang="pug">
-#app.main-content.bg-default
-  auth-header(v-if="isAuthArea")
+#app.bg-default.wrapper
+  side-bar(v-if="!isAuthArea")
   .main-content
+    auth-header(v-if="isAuthArea")
     zoom-center-transition(:duration="pageTransitionDuration" mode="out-in")
       router-view
-  auth-footer
+    app-footer(:class='[{"auth-footer": isAuthArea}]')
 </template>
 
 <script>
 import { ZoomCenterTransition } from "vue2-transitions";
 import AuthHeader from "./components/Guide/AuthHeader.vue";
-import AuthFooter from "./components/Guide/AuthFooter.vue";
+import Footer from "./components/Guide/Footer.vue";
+import SideBar from "./components/Guide/SideBar.vue";
 export default {
   components: {
     ZoomCenterTransition,
     AuthHeader,
-    AuthFooter,
+    "app-footer": Footer,
+    SideBar,
   },
   computed: {
     isAuthArea() {
@@ -35,4 +38,10 @@ export default {
 </script>
 <style>
 @import "./assets/css/main.css";
+/*#app .container {
+  background-color: #f8f9fe;
+}*/
+.main-content .auth-footer {
+  background-color: #182a4e;
+}
 </style>

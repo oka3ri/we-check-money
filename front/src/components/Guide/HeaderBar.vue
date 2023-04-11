@@ -23,7 +23,7 @@ base-nav.navbar-top.navbar-expand(container-classes="container-fluid" :class="{'
             img(alt="Image placeholder" src="img/theme/team-4.jpg")
           b-media-body.ml-2.d-none.d-lg-block
             span.mb-0.text-sm.font-weight-bold John Snow
-  <template lang="pug">
+  template
     b-dropdown-header.noti-title
       h6.text-overflow.m-0 Welcome!
     b-dropdown-item(href="#!")
@@ -42,37 +42,37 @@ base-nav.navbar-top.navbar-expand(container-classes="container-fluid" :class="{'
     b-dropdown-item(href="#!")
       i.ni.ni-user-run
       span Logout
-  </template>
 </template>
 <script>
-import { CollapseTransition } from 'vue2-transitions';
-import { BaseNav, Modal } from '@/components';
+import { CollapseTransition } from "vue2-transitions";
+import { BaseNav, Modal } from "../../components";
 
 export default {
   components: {
     CollapseTransition,
     BaseNav,
-    Modal
+    Modal,
   },
   props: {
     type: {
       type: String,
-      default: 'default', // default|light
-      description: 'Look of the dashboard navbar. Default (Green) or light (gray)'
-    }
+      default: "default", // default|light
+      description:
+        "Look of the dashboard navbar. Default (Green) or light (gray)",
+    },
   },
   computed: {
     routeName() {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
-    }
+    },
   },
   data() {
     return {
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: ''
+      searchQuery: "",
     };
   },
   methods: {
@@ -84,7 +84,7 @@ export default {
     },
     closeDropDown() {
       this.activeNotifications = false;
-    }
-  }
+    },
+  },
 };
 </script>
