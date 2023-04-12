@@ -102,7 +102,7 @@ public class JwtTokenProvider {
                 .get("userId", Long.class);
     }
 
-    public boolean validateToken(String token, String type) {
+    public boolean validateToken(String token, String type) throws Exception {
         logger.info("validateToken Method >> {} ", token);
         try {
             Jwts.parser().setSigningKey(properties.getToken().getSecret()).parseClaimsJws(token);

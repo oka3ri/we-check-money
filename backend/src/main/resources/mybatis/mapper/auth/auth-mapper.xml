@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.wecheck.security.mapper.AuthMapper">
+    <sql id="authMapperWhere">
+        WHERE 1=1
+        AND A.del_date IS NULL
+    </sql>
     <select id="checkDuplicateNickname" parameterType="com.wecheck.app.user.dto.UserDto" resultType="int">
         SELECT COUNT(0) FROM users WHERE nickname = #{nickname}
     </select>
@@ -25,16 +29,18 @@
         FROM users A
                  LEFT JOIN user_auth B ON B.user_id = A.user_id
                  LEFT JOIN social_auth C ON C.user_id = A.user_id
-        WHERE A.user_id = #{userId}
+        <include refid="authMapperWhere" />
+        AND A.user_id = #{userId}
     </select>
     <select id="findUserInfoByLoginId" parameterType="String" resultType="com.wecheck.app.user.dto.UserDto">
         SELECT
-            A.*,
-            B.nickname,
-            B.type_cdx
-        FROM user_auth A
-        INNER JOIN users B ON B.user_id = A.user_id
-        WHERE A.login_id = #{loginId}
+            A.nickname,
+            A.type_cdx,
+            B.*
+        FROM users A
+        INNER JOIN user_auth B ON B.user_id = A.user_id
+        <include refid="authMapperWhere" />
+        AND B.login_id = #{loginId}
     </select>
     <select id="findUserInfoByNickname" parameterType="String" resultType="com.wecheck.app.user.dto.UserDto">
         SELECT
@@ -47,6 +53,7 @@
         FROM users A
         LEFT JOIN user_auth B ON B.user_id = A.user_id
         LEFT JOIN social_auth C ON C.user_id = A.user_id
-        WHERE A.nickname = #{nickname}
+        <include refid="authMapperWhere" />
+        AND A.nickname = #{nickname}
     </select>
 </mapper>

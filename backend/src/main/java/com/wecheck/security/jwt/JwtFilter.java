@@ -20,39 +20,12 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Override
-//    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-//        logger.info("JwtFilter doFilter >>>> ");
-//        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-//        String requestURI = httpServletRequest.getRequestURI();
-//        // NOTE: 회원가입 페이지 접근시 하위 로직 생략
-//        if(requestURI.equals("/auth/signup")) {
-//            logger.info("access signup page >>>> ");
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-//        // access-token 추출
-//        String token = jwtTokenProvider.resolveToken(httpServletRequest);
-//        boolean isValidToken = jwtTokenProvider.validateToken(token, "atk", request);
-//        // 토큰 유효성 체크
-//        if (StringUtils.hasText(token) && isValidToken) {
-//            // securityContext에 token 저장
-//            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//            logger.info("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
-//        } else {
-//            logger.info("유효한 Access Token이 없습니다, uri: {}", requestURI);
-//        }
-//
-//        filterChain.doFilter(request, response);
-//    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logger.info("JwtFilter doFilter >>>> ");
         String requestURI = request.getRequestURI();
         // NOTE: 회원가입 페이지 접근시 하위 로직 생략
-        if(requestURI.equals("/auth/signup")) {
+        if(requestURI.equals("/auth/signup") || requestURI.equals("/auth/login")) {
             logger.info("access signup page >>>> ");
             filterChain.doFilter(request, response);
             return;
