@@ -32,7 +32,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setCharacterEncoding("UTF-8");
         Map<String, String> errorDetails = new HashMap<>();
         // NOTE: Access Token 만료된 경우
-        if(exception.equals(TokenErrCode.TOKEN_001.getCode())) {
+        if(exception != null && exception.equals(TokenErrCode.TOKEN_001.getCode())) {
             errorDetails.put("code", TokenErrCode.TOKEN_001.getCode());
             errorDetails.put("message", TokenErrCode.TOKEN_001.getMessage());
         } else {

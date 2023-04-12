@@ -1,6 +1,7 @@
 package com.wecheck.security.service;
 
 import com.wecheck.app.user.dto.UserDto;
+import com.wecheck.app.user.service.UserService;
 import com.wecheck.common.exception.CustomException;
 import com.wecheck.common.properties.CommonProperties;
 import com.wecheck.common.response.CommonResponse;
@@ -13,9 +14,6 @@ import com.wecheck.security.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +31,14 @@ public class AuthService {
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     private final AuthMapper authMapper;
     private final TokenService tokenService;
+    private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final CommonProperties properties;
 
 
     @Transactional
-    public ResponseEntity<CommonResponse> login(LoginDto loginDto) throws Exception {
+    public CommonResponse login(LoginDto loginDto) throws Exception {
         UserDto user = authMapper.findUserInfoByLoginId(loginDto.getLoginId());
         if(user == null) {
             throw new CustomException("해당 사용자 정보가 존재하지 않습니다.");
@@ -55,14 +54,7 @@ public class AuthService {
         String dateFmt = sdf.format(new Date(tokenExp));
         tokenService.insertUserRefreshToken(RefreshTokenDto.builder().userId(user.getUserId()).refreshToken(refreshToken).expiredDate(dateFmt).build());
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(properties.getToken().getTokenName(), properties.getToken().getPrefix()+" "+ accessToken);
-        logger.info("httpHeaders >>> {} ", httpHeaders.toString());
-
-        return new ResponseEntity<>(
-                CommonResponse.of(true, TokenDto.builder().refreshToken(refreshToken).build())
-                , httpHeaders, HttpStatus.OK);
-
+        return CommonResponse.of(true, TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build());
     }
 
     @Transactional
@@ -82,17 +74,14 @@ public class AuthService {
         tokenService.deleteUserRefreshToken(RefreshTokenDto.builder().userId(userId).build());
 
         return CommonResponse.of(true, Optional.empty());
-
     }
 
     // NOTE: access 토큰 만료시 재발급 요청
-    public ResponseEntity<CommonResponse> reissue(HttpServletRequest servletRequest) throws Exception {
-        String refreshToken = jwtTokenProvider.resolveToken(servletRequest);
+    public CommonResponse reissue(HttpServletRequest request) throws Exception {
+        String refreshToken = jwtTokenProvider.resolveToken(request);
         // NOTE: 넘겨받은 토큰값 유효성 검증
         if(!jwtTokenProvider.validateToken(refreshToken, "rtk")) {
-            new ResponseEntity<>(
-                    CommonResponse.of(false, TokenErrCode.TOKEN_002.getCode(), TokenErrCode.TOKEN_002.getMessage())
-                    , HttpStatus.OK);
+           return CommonResponse.of(false, TokenErrCode.TOKEN_003.getCode(), TokenErrCode.TOKEN_003.getMessage());
         }
 
         Long tkUserId = jwtTokenProvider.getUserId(refreshToken); // 유저아이디 추출
@@ -105,29 +94,22 @@ public class AuthService {
         RefreshTokenDto rtkDto = tokenService.getUserRefreshToken(tkUserId);
         // NOTE: DB에 저장된 토큰 정보가 없을 경우 || 넘어온 토큰값과 DB 토큰값이 다를 경우 에러처리
         if(rtkDto == null || !rtkDto.getRefreshToken().equals(refreshToken)) {
-            return new ResponseEntity<>(
-                    CommonResponse.of(false, TokenErrCode.TOKEN_003.getCode(), TokenErrCode.TOKEN_003.getMessage())
-                    , HttpStatus.OK);
+            return CommonResponse.of(false, TokenErrCode.TOKEN_003.getCode(), TokenErrCode.TOKEN_003.getMessage());
         }
 
-        String reissueAccessToken = jwtTokenProvider.createAccessToken(user);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(properties.getToken().getTokenName(), properties.getToken().getPrefix() + " " + reissueAccessToken);
-        logger.info("httpHeaders >>> {} ", httpHeaders.toString());
-
-        return new ResponseEntity<>(CommonResponse.of(true, Optional.empty()), httpHeaders, HttpStatus.OK);
+        return CommonResponse.of(true, TokenDto.builder().accessToken(jwtTokenProvider.createAccessToken(user)).build());
 
     }
 
     @Transactional
-    public ResponseEntity<CommonResponse> insertSignUpUser(UserDto params) throws Exception {
+    public CommonResponse insertSignUpUser(UserDto params) throws Exception {
         // 닉네임 중복검사
-        boolean isDuplicateNickname = authMapper.checkDuplicateNickname(params) > 0;
+        boolean isDuplicateNickname = userService.checkDuplicateNickname(params.getNickname()) > 0;
         if(isDuplicateNickname) {
             throw new CustomException("이미 등록된 닉네임입니다.");
         }
         // 로그인 아이디 중복검사
-        boolean isDuplicateLoginId = authMapper.checkDuplicateLoginId(params) > 0;
+        boolean isDuplicateLoginId = userService.checkDuplicateLoginId(params.getLoginId()) > 0;
         if(isDuplicateLoginId) {
             throw new CustomException("이미 등록된 아이디입니다.");
         }
@@ -153,14 +135,6 @@ public class AuthService {
                 .userId(result.getUserId())
                 .expiredDate(dateFmt).build());
 
-        // SET headers
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(properties.getToken().getTokenName(), properties.getToken().getPrefix() + " " + accessToken);
-        logger.info("httpHeaders >>> {} ", httpHeaders.toString());
-
-
-        return new ResponseEntity<>(
-                CommonResponse.of(true, TokenDto.builder().refreshToken(refreshToken).build())
-                , httpHeaders, HttpStatus.OK);
+        return CommonResponse.of(true, TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build());
     }
 }

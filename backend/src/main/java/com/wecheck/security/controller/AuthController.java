@@ -7,7 +7,6 @@ import com.wecheck.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +25,13 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<CommonResponse> login(@RequestBody LoginDto loginDto) throws Exception{
+    public CommonResponse login(@RequestBody LoginDto loginDto) throws Exception{
         return authService.login(loginDto);
 
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<CommonResponse> signup(@RequestBody UserDto params) throws Exception {
+    public CommonResponse signup(@RequestBody UserDto params) throws Exception {
         return authService.insertSignUpUser(params);
     }
 
@@ -42,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<CommonResponse> reissue(HttpServletRequest request) throws Exception {
+    public CommonResponse reissue(HttpServletRequest request) throws Exception {
         return  authService.reissue(request);
     }
 }
