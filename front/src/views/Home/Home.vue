@@ -84,6 +84,6 @@ export default {
   padding-right: 0px;
 }
 .container {
-  height: 600px;
+  height: 845px;
 }
 </style>

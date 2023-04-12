@@ -8,14 +8,14 @@
             href="https://www.creative-tim.com"
             class="font-weight-bold ml-1"
             target="_blank"
-            >Creative Tim</a
+            >Wecheck</a
           >
         </div>
       </b-col>
       <b-col lg="6">
         <b-nav align="center" class="nav-footer justify-content-lg-end">
           <b-nav-item href="https://www.creative-tim.com" target="_blank">
-            Creative Tim
+            Wecheck
           </b-nav-item>
           <b-nav-item
             href="https://www.creative-tim.com/presentation"

@@ -78,3 +78,11 @@
 .auth-num-check-area {
   margin-bottom: 1.5rem;
 }
+.wrapper .navbar-vertical .navbar-nav .nav-link {
+  font-size: 14px;
+  font-weight: 700;
+}
+.wrapper .navbar-vertical .navbar-nav .nav-link > i {
+  font-size: 24px;
+  margin-right: 10px;
+}

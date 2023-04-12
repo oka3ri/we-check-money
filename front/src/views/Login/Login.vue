@@ -28,11 +28,11 @@ div
               small 소셜 계정으로 로그인
             .btn-wrapper.text-center
               .social-login-btn.naver-btn
-                img(src="img/icons/common/naver.png")
+                img(src="@/assets/images/icons/common/naver.png")
               .social-login-btn.kakao-btn
-                img(src="img/icons/common/kakao.png")
+                img(src="@/assets/images/icons/common/kakao.png")
               .social-login-btn.google-btn
-                img(src="img/icons/common/google.png")
+                img(src="@/assets/images/icons/common/google.png")
         b-row.mt-3
           b-col(cols="6")
             .text-light(@click="$_goTo({name: 'login'})")

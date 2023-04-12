@@ -1,5 +1,5 @@
 <template lang="pug">
-#app.bg-default.wrapper
+#app.wrapper(:class='[{"bg-default": isAuthArea}]')
   side-bar(v-if="!isAuthArea")
   .main-content
     auth-header(v-if="isAuthArea")
@@ -43,5 +43,8 @@ export default {
 }*/
 .main-content .auth-footer {
   background-color: #182a4e;
+}
+body .nav-link-text {
+  font-family: "Gothic A1", sans-serif;
 }
 </style>

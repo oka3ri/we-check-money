@@ -52,13 +52,13 @@ div
             .btn-wrapper.text-center
               .social-login-btn.naver-btn
                 //- span.btn-inner--icon
-                img(src="img/icons/common/naver.png")
+                img(src="@/assets/images/icons/common/naver.png")
               .social-login-btn.kakao-btn
                 //- span.btn-inner--icon
-                img(src="img/icons/common/kakao.png")
+                img(src="@/assets/images/icons/common/kakao.png")
               .social-login-btn.google-btn
                 //- span.btn-inner--icon
-                img(src="img/icons/common/google.png")
+                img(src="@/assets/images/icons/common/google.png")
         //- b-row.mt-3
           b-col(cols="6")
             //- TODO: router-link 부분은 추후에 싸그리 싹싹 바꿔야 함

@@ -4,12 +4,12 @@ base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu"
   .navbar-wrapper
     //- b-navbar-brand(to="/")
     a.navbar-brand.active(@click="$_goTo({name: 'login'})")
-      img.header-logo(src="img/brand/white.png")
+      img.header-logo(src="@/assets/images/brand/white.png")
     //- .navbar-collapse-header
       b-row
         b-col.collapse-brand(cols="6")
           router-link(to="/")
-            img(src="img/brand/green.png")
+            img(src="@/assets/images/brand/green.png")
         b-col.collapse-close(cols="6")
           button.navbar-toggler(type="button" @click="showMenu = false")
             span

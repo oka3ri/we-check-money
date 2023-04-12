@@ -20,7 +20,7 @@ base-nav.navbar-top.navbar-expand(container-classes="container-fluid" :class="{'
       a.nav-link.pr-0(href="#" @click.prevent slot="title-container")
         b-media.align-items-center(no-body)
           span.avatar.avatar-sm.rounded-circle
-            img(alt="Image placeholder" src="img/theme/team-4.jpg")
+            img(alt="Image placeholder" src="@/assets/images/theme/team-4.jpg")
           b-media-body.ml-2.d-none.d-lg-block
             span.mb-0.text-sm.font-weight-bold John Snow
   template
