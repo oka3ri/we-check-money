@@ -1,24 +1,22 @@
 <template lang="pug">
-  //- <!-- <div class="sidebar-wrapper"> -->
-  //- <!-- <notifications></notifications> -->
-  side-bar
-    template(slot="links")
-      a.nav-item
-        a.nav-link
-          i.fa-solid.fa-money-bill-transfer(style="color: #EF8D4B;")
-          span.nav-link-text 가계부
-        a.nav-link
-          i.fa-solid.fa-chart-pie(style="color: #EF8D4B;")
-          span.nav-link-text 통계
-        a.nav-link
-          i.fa-solid.fa-comments-dollar(style="color: #EF8D4B;")
-          span.nav-link-text 그룹
-        a.nav-link
-          i.fa-solid.fa-piggy-bank(style="color: #EF8D4B;")
-          span.nav-link-text 자산
-        a.nav-link
-          i.fa-solid.fa-gear(style="color: #EF8D4B;")
-          span.nav-link-text 설정
+side-bar
+  template(slot="links")
+    a.nav-item
+      a.nav-link
+        i.fa-solid.fa-money-bill-transfer(style="color: #EF8D4B;")
+        span.nav-link-text 가계부
+      a.nav-link
+        i.fa-solid.fa-chart-pie(style="color: #EF8D4B;")
+        span.nav-link-text 통계
+      a.nav-link
+        i.fa-solid.fa-comments-dollar(style="color: #EF8D4B;")
+        span.nav-link-text 그룹
+      a.nav-link
+        i.fa-solid.fa-piggy-bank(style="color: #EF8D4B;")
+        span.nav-link-text 자산
+      a.nav-link
+        i.fa-solid.fa-gear(style="color: #EF8D4B;")
+        span.nav-link-text 설정
 </template>
 <script>
 import PerfectScrollbar from "perfect-scrollbar";

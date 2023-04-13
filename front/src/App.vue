@@ -1,23 +1,26 @@
 <template lang="pug">
 #app.wrapper(:class='[{"bg-default": isAuthArea}]')
   side-bar(v-if="!isAuthArea")
-  .main-content
+  .main-content(:class="[{'bg-default': isAuthArea}]")
     auth-header(v-if="isAuthArea")
     zoom-center-transition(:duration="pageTransitionDuration" mode="out-in")
       router-view
-    app-footer(:class='[{"auth-footer": isAuthArea}]')
+    app-footer(v-if="!isMobile || isAuthArea" :class='[{"auth-footer": isAuthArea}]')
+  mobile-footer(v-if="isMobile && !isAuthArea")
 </template>
 
 <script>
 import { ZoomCenterTransition } from "vue2-transitions";
 import AuthHeader from "./components/Guide/AuthHeader.vue";
 import Footer from "./components/Guide/Footer.vue";
+import MobileFooter from "./components/Guide/MobileFooter.vue";
 import SideBar from "./components/Guide/SideBar.vue";
 export default {
   components: {
     ZoomCenterTransition,
     AuthHeader,
     "app-footer": Footer,
+    MobileFooter,
     SideBar,
   },
   computed: {
@@ -27,6 +30,11 @@ export default {
         return true;
       }
       return false;
+    },
+    isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
     },
   },
   data() {

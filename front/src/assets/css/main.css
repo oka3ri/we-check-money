@@ -24,6 +24,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 .btn-wrapper .naver-btn {
   background-color: #03c75a;
@@ -85,4 +86,28 @@
 .wrapper .navbar-vertical .navbar-nav .nav-link > i {
   font-size: 24px;
   margin-right: 10px;
+}
+.header .text-white {
+  word-break: keep-all;
+}
+.go-login {
+  margin-left: 5px;
+}
+.go-login small {
+  text-decoration: underline;
+}
+a {
+  cursor: pointer;
+}
+a * {
+  cursor: pointer !important;
+}
+h1,
+h6,
+p,
+small {
+  cursor: default;
+}
+.wrapper .navbar-horizontal .navbar-nav .nav-link .nav-link-inner--text {
+  margin-left: 10px;
 }

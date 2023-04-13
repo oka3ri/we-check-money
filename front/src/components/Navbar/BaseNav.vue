@@ -1,15 +1,10 @@
 <template lang="pug">
-  b-navbar(toggleable :class="classes")
-    div(:class="containerClasses")
-      slot(name="brand")
-      slot(name="toggle-button")
-        button.navbar-toggler.collapsed(v-if="hasMenu" type="button" @click="toggleMenu" aria-expanded="false" aria-label="Toggle navigation")
-          span.navbar-toggler-bar.navbar-kebab
-          span.navbar-toggler-bar.navbar-kebab
-          span.navbar-toggler-bar.navbar-kebab
-      b-navbar-toggle(target="nav-text-collapse" @click.stop="toggleMenu")
-      b-collapse.navbar-custom-collapse.collapse(is-nav id="nav-text-collapse" :class="menuClasses" :visible="show" v-click-outside="closeMenu")
-        slot(:close-menu="closeMenu")
+b-navbar(toggleable :class="classes")
+  .px-4(:class="containerClasses")
+    slot(name="brand")
+    b-navbar-toggle(target="nav-text-collapse" @click.stop="toggleMenu")
+    b-collapse.navbar-custom-collapse.collapse(is-nav :class="menuClasses" :visible="show" v-click-outside="closeMenu")
+      slot(:close-menu="closeMenu")
 </template>
 <script>
 export default {

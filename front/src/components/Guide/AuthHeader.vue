@@ -1,34 +1,36 @@
 <template lang="pug">
-//- .bg-default
 base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu" :transparent="true" menu-classes="justify-content-end" expand="lg")
-  .navbar-wrapper
-    //- b-navbar-brand(to="/")
+  .navbar-wrapper(slot="brand")
     a.navbar-brand.active(@click="$_goTo({name: 'login'})")
       img.header-logo(src="@/assets/images/brand/white.png")
-    //- .navbar-collapse-header
+  template
+    .navbar-collapse-header
       b-row
         b-col.collapse-brand(cols="6")
-          router-link(to="/")
+          a
             img(src="@/assets/images/brand/green.png")
         b-col.collapse-close(cols="6")
-          button.navbar-toggler(type="button" @click="showMenu = false")
+          //- navbar-toggle-button(@click.native="showMenu = false")
+          button.navbar-toggler(type="button" @click="$event => showMenu = false")
             span
             span
-  //- b-navbar-nav.align-items-lg-center.ml-lg-auto
-  ul.navbar-nav.align-items-lg-center.ml-lg-auto
-    b-nav-item(@click="$_goTo({name: 'signup'})")
-      i.ni.ni-circle-08
-      span.nav-link-inner--text 회원가입
-    b-nav-item(@click="$_goTo({name: 'login'})")
-      i.ni.ni-key-25
-      span.nav-link-inner--text 로그인
+    b-navbar-nav.align-items-lg-center.ml-lg-auto
+      ul.navbar-nav.align-items-lg-center.ml-lg-auto
+        b-nav-item(@click="$_goTo({name: 'login'})")
+          i.fa-solid.fa-user-check
+          span.nav-link-inner--text 로그인
+        b-nav-item(@click="$_goTo({name: 'signup'})")
+          i.fa-solid.fa-user-plus
+          span.nav-link-inner--text 회원가입
 </template>
 <script>
 import { BaseNav } from "@/components";
+import { ZoomCenterTransition } from "vue2-transitions";
 
 export default {
   components: {
     BaseNav,
+    ZoomCenterTransition,
   },
   props: {
     backgroundColor: {
@@ -58,6 +60,7 @@ export default {
     closeMenu() {
       document.body.classList.remove("nav-open");
       this.showMenu = false;
+      console.log("close menu");
     },
     setBackgroundColor() {
       document.body.classList.add("bg-default");

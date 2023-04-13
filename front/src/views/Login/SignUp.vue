@@ -6,7 +6,7 @@ div
       .header-body.text-center.mb-7
         b-row.justify-content-center
           b-col.px-5(xl="6" lg="6" md="8")
-            h1.text-white wecheck에 오신 것을 환영합니다!
+            h1.text-white wecheck에 오신 것을 환영합니다 !
             p.text-lead.text-white
               | 자산의 이동을 정확하고 자세하게 
               span.highlight-info-txt check
@@ -45,7 +45,7 @@ div
                 base-input.mb-3(alternative name="pw-confirm" required="confirmed:password" :rules="pwdConfirmRule" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="비밀번호 확인" v-model="user.passwordConfirm")
                 //- b-form-checkbox(v-model="user.rememberMe") Remember me
                 .text-center
-                  base-button.my-4(type="primary" native-type="button" @click='login()') 가입하기
+                  base-button.my-4(type="primary" native-type="button" @click='registerUser()') 가입하기
           b-card-body.px-lg-5.py-lg-5
             .text-muted.text-center.mt-2.mb-3
               small 소셜 계정으로 가입하기
@@ -59,14 +59,16 @@ div
               .social-login-btn.google-btn
                 //- span.btn-inner--icon
                 img(src="@/assets/images/icons/common/google.png")
-        //- b-row.mt-3
+        b-row.mt-3
           b-col(cols="6")
             //- TODO: router-link 부분은 추후에 싸그리 싹싹 바꿔야 함
-            router-link.text-light(@click="$_goTo({name: 'login'})")
+            //- router-link.text-light(@click="$_goTo({name: 'login'})")
               small 아이디 | 비밀번호 찾기
           b-col.text-right(cols="6")
-            router-link.text-light(@click="$_goTo({name: 'signup'})")
-              small 회원가입
+            .text-light
+              small 이미 계정이 있으신가요?
+              a.go-login(@click="$_goTo({name: 'login'})")
+                small 로그인
 </template>
 <script>
 export default {
@@ -139,6 +141,10 @@ export default {
     },
   },
   methods: {
+    registerUser() {
+      // TODO: 회원 가입 API 요청
+      // form의 valid 값 확인 가능한지?
+    },
     sendAuthNumber() {
       // TODO: 인증번호 요청
       this.$alert("인증번호가 전송되었습니다.", "", "success");
@@ -160,26 +166,7 @@ export default {
     checkTelValid(valid) {
       this.telValid = valid;
     },
-    login() {
-      if (this.user.id == "") {
-        alert("아이디를 입력해 주세요.");
-        return;
-      } else if (this.user.password == "") {
-        alert("비밀번호를 입력해 주세요.");
-        return;
-      }
-      if (
-        !this.idRegex.test(this.user.id) ||
-        !this.pwRegex.test(this.user.password)
-      ) {
-        alert(
-          "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다."
-        );
-        return;
-      }
-    },
     ChangeHipenTel(e) {
-      // .replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
       this.user.tel = e
         .replace(/[^0-9]/g, "")
         .replace(

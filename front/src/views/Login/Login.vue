@@ -35,10 +35,10 @@ div
                 img(src="@/assets/images/icons/common/google.png")
         b-row.mt-3
           b-col(cols="6")
-            .text-light(@click="$_goTo({name: 'login'})")
+            a.text-light(@click="$_goTo({name: 'login'})")
               small 아이디 | 비밀번호 찾기
           b-col.text-right(cols="6")
-            .text-light(@click="$_goTo({name: 'signup'})")
+            a.text-light(@click="$_goTo({name: 'signup'})")
               small 회원가입
 </template>
 <script>
