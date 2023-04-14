@@ -7,7 +7,7 @@ div
         b-row.justify-content-center
           b-col.px-5(xl="6" lg="6" md="8")
             h1.text-white wecheck에 오신 것을 환영합니다 !
-            p.text-lead.text-white
+            p.text-lead.text-white.signup-text
               | 자산의 이동을 정확하고 자세하게 
               span.highlight-info-txt check
               br
@@ -208,13 +208,31 @@ export default {
 };
 </script>
 <style>
+.text-right .text-light {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+@media (max-width: 426px) {
+  .text-right small {
+    word-break: keep-all;
+  }
+}
 @media (max-width: 376px) {
+  .signup-text {
+    font-size: 13px;
+  }
   .auth-num-check-form {
     flex-wrap: wrap;
   }
   .auth-num-check-button-group {
     margin: 0;
     margin-top: 10px;
+  }
+  .bg-default .header {
+    padding-bottom: 50px !important;
   }
 }
 </style>

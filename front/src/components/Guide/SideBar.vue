@@ -1,21 +1,21 @@
 <template lang="pug">
-side-bar
+side-bar(ref="sideBarPlugin")
   template(slot="links")
-    a.nav-item
-      a.nav-link
-        i.fa-solid.fa-money-bill-transfer(style="color: #EF8D4B;")
+    a.nav-item.side-menu
+      a.nav-link(:class='checkMenu("home")' @click='selectMenu("home")')
+        i.fa-solid.fa-money-bill-transfer
         span.nav-link-text 가계부
-      a.nav-link
-        i.fa-solid.fa-chart-pie(style="color: #EF8D4B;")
+      a.nav-link(:class='checkMenu("statistics")' @click='selectMenu("statistics")')
+        i.fa-solid.fa-chart-pie
         span.nav-link-text 통계
-      a.nav-link
-        i.fa-solid.fa-comments-dollar(style="color: #EF8D4B;")
+      a.nav-link(:class='checkMenu("group")' @click='selectMenu("group")')
+        i.fa-solid.fa-comments-dollar
         span.nav-link-text 그룹
-      a.nav-link
-        i.fa-solid.fa-piggy-bank(style="color: #EF8D4B;")
+      a.nav-link(:class='checkMenu("assets")' @click='selectMenu("assets")')
+        i.fa-solid.fa-piggy-bank
         span.nav-link-text 자산
-      a.nav-link
-        i.fa-solid.fa-gear(style="color: #EF8D4B;")
+      a.nav-link(:class='checkMenu("setting")' @click='selectMenu("setting")')
+        i.fa-solid.fa-gear
         span.nav-link-text 설정
 </template>
 <script>
@@ -37,11 +37,20 @@ function initScrollbar(className) {
   }
 }
 
-
 export default {
   components: {
   },
   methods: {
+    selectMenu(menu) {
+      this.$_goTo({ name: menu })
+      this.$refs.sideBarPlugin.closeSidebar()
+      // console.log(this.$refs.sideBarPlugin.closeSidebar())
+    },
+    checkMenu(name) {
+      if (name == this.$route.name) {
+        return 'selected-menu'
+      }
+    },
     initScrollbar() {
       let isWindows = navigator.platform.startsWith("Win");
       if (isWindows) {
@@ -56,6 +65,15 @@ export default {
 </script>
 <style scoped>
 .navbar-light .navbar-nav  .nav-item .nav-link:hover .fa-solid{
-  color: #b96a35 !important;
+  color: #b96a35;
+}
+.side-menu .fa-solid {
+  color: #ef8d4b;
+}
+.selected-menu .fa-solid {
+  color: #000000b3 !important;
+}
+.selected-menu .nav-link-text {
+  color: #000000b3 !important;
 }
 </style>></style>

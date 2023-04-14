@@ -2,7 +2,7 @@
 nav#sidenav-main.navbar.navbar-vertical.fixed-left.navbar-expand-md.navbar-light.bg-white
   .container-fluid
     navbar-toggle-button(v-if="!isMobile" @click.native="showSidebar")
-    a.navbar-brand(@click='goTo({name: "home"})')
+    a.navbar-brand(@click='$_goTo({name: "home"})')
       img.navbar-brand-img(src="@/assets/images/brand/green.png")
     slot(name="mobile-right")
       ul.nav.align-items-center.d-md-none

@@ -1,12 +1,12 @@
 <template lang="pug">
 #app.wrapper(:class='[{"bg-default": isAuthArea}]')
-  side-bar(v-if="!isAuthArea")
+  side-bar(v-if="!isAuthArea && !isNotFoundPage")
   .main-content(:class="[{'bg-default': isAuthArea}]")
     auth-header(v-if="isAuthArea")
     zoom-center-transition(:duration="pageTransitionDuration" mode="out-in")
       router-view
-    app-footer(v-if="!isMobile || isAuthArea" :class='[{"auth-footer": isAuthArea}]')
-  mobile-footer(v-if="isMobile && !isAuthArea")
+    app-footer(v-if="(!isMobile || isAuthArea) && !isNotFoundPage" :class='[{"auth-footer": isAuthArea}]')
+  mobile-footer(v-if="(isMobile && !isAuthArea) && !isNotFoundPage")
 </template>
 
 <script>
@@ -30,6 +30,9 @@ export default {
         return true;
       }
       return false;
+    },
+    isNotFoundPage() {
+      return this.$route.name == undefined;
     },
     isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(

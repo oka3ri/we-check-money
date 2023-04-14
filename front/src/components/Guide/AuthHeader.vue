@@ -1,7 +1,7 @@
 <template lang="pug">
 base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu" :transparent="true" menu-classes="justify-content-end" expand="lg")
   .navbar-wrapper(slot="brand")
-    a.navbar-brand.active(@click="$_goTo({name: 'login'})")
+    a.navbar-brand.active
       img.header-logo(src="@/assets/images/brand/white.png")
   template
     .navbar-collapse-header
@@ -10,16 +10,15 @@ base-nav.navbar-horizontal.navbar-main.navbar-top.navbar-dark(v-model="showMenu"
           a
             img(src="@/assets/images/brand/green.png")
         b-col.collapse-close(cols="6")
-          //- navbar-toggle-button(@click.native="showMenu = false")
           button.navbar-toggler(type="button" @click="$event => showMenu = false")
             span
             span
     b-navbar-nav.align-items-lg-center.ml-lg-auto
       ul.navbar-nav.align-items-lg-center.ml-lg-auto
-        b-nav-item(@click="$_goTo({name: 'login'})")
+        b-nav-item(@click="selectMenu('login')")
           i.fa-solid.fa-user-check
           span.nav-link-inner--text 로그인
-        b-nav-item(@click="$_goTo({name: 'signup'})")
+        b-nav-item(@click="selectMenu('signup')")
           i.fa-solid.fa-user-plus
           span.nav-link-inner--text 회원가입
 </template>
@@ -53,15 +52,19 @@ export default {
     },
   },
   methods: {
-    toggleNavbar() {
-      document.body.classList.toggle("nav-open");
-      this.showMenu = !this.showMenu;
-    },
-    closeMenu() {
-      document.body.classList.remove("nav-open");
+    selectMenu(menu) {
       this.showMenu = false;
-      console.log("close menu");
+      this.$_goTo({ name: menu });
     },
+    // toggleNavbar() {
+    //   document.body.classList.toggle("nav-open");
+    //   this.showMenu = !this.showMenu;
+    // },
+    // closeMenu() {
+    //   document.body.classList.remove("nav-open");
+    //   this.showMenu = false;
+    //   console.log("close menu");
+    // },
     setBackgroundColor() {
       document.body.classList.add("bg-default");
     },
@@ -78,17 +81,6 @@ export default {
   },
   beforeDestroy() {
     this.removeBackgroundColor();
-  },
-  beforeRouteUpdate(to, from, next) {
-    // Close the mobile menu first then transition to next page
-    if (this.showMenu) {
-      this.closeMenu();
-      setTimeout(() => {
-        next();
-      }, this.menuTransitionDuration);
-    } else {
-      next();
-    }
   },
   watch: {
     $route: {
