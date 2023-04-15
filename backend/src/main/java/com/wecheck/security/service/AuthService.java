@@ -77,7 +77,7 @@ public class AuthService {
     }
 
     // NOTE: access 토큰 만료시 재발급 요청
-    public CommonResponse reissue(HttpServletRequest request) throws Exception {
+    public CommonResponse reissueAccessToken(HttpServletRequest request) throws Exception {
         String refreshToken = jwtTokenProvider.resolveToken(request);
         // NOTE: 넘겨받은 토큰값 유효성 검증
         if(!jwtTokenProvider.validateToken(refreshToken, "rtk")) {
@@ -104,12 +104,12 @@ public class AuthService {
     @Transactional
     public CommonResponse insertSignUpUser(UserDto params) throws Exception {
         // 닉네임 중복검사
-        boolean isDuplicateNickname = userService.checkDuplicateNickname(params.getNickname()) > 0;
+        boolean isDuplicateNickname = userService.checkDuplicateNickname(params.getNickname()) != null;
         if(isDuplicateNickname) {
             throw new CustomException("이미 등록된 닉네임입니다.");
         }
         // 로그인 아이디 중복검사
-        boolean isDuplicateLoginId = userService.checkDuplicateLoginId(params.getLoginId()) > 0;
+        boolean isDuplicateLoginId = userService.checkDuplicateLoginId(params.getLoginId()) != null;
         if(isDuplicateLoginId) {
             throw new CustomException("이미 등록된 아이디입니다.");
         }

@@ -1,5 +1,6 @@
 package com.wecheck.app.user.controller;
 
+import com.wecheck.app.user.dto.UserDto;
 import com.wecheck.app.user.service.UserService;
 import com.wecheck.common.response.AppResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +17,20 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
-    @GetMapping("/user/checkNickname")
-    public AppResponse checkDuplicateNickname(@RequestParam String nickname) throws Exception {
-        int result = userService.checkDuplicateNickname(nickname);
-        return AppResponse.builder().totalCount(result).build();
+    @GetMapping("/user/property")
+    public AppResponse checkDuplicateProperty(
+            @RequestParam(value="nickname",required=false) String nickname,
+            @RequestParam(value="loginId",required=false) String loginId) throws Exception {
+        UserDto result = new UserDto();
+        if(nickname != null) {
+            result = userService.checkDuplicateNickname(nickname);
+        } else if(loginId != null) {
+            result = userService.checkDuplicateLoginId(loginId);
+        }
+        return AppResponse.builder().data(result).build();
     }
 
-    @GetMapping("/user/checkLoginId")
-    public AppResponse checkDuplicateLoginId(@RequestParam String loginId) throws Exception{
-        int result = userService.checkDuplicateLoginId(loginId);
-        return AppResponse.builder().totalCount(result).build();
-    }
-
+    // NOTE: token test API
     @GetMapping("/test/jwttoken")
     public String testJwtToken() {
         return "testJwt";
