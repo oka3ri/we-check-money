@@ -7,16 +7,13 @@ import com.wecheck.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RestController
 public class AuthController {
 
@@ -24,24 +21,24 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @PostMapping("/login")
+    @PostMapping("/app")
     public CommonResponse login(@RequestBody LoginDto loginDto) throws Exception{
         return authService.login(loginDto);
 
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/app/new")
     public CommonResponse signup(@RequestBody UserDto params) throws Exception {
         return authService.insertSignUpUser(params);
     }
 
-    @PostMapping("/logout")
+    @DeleteMapping("/app")
     public CommonResponse logout(HttpServletRequest request) throws Exception {
         return  authService.logout(request);
     }
 
-    @PostMapping("/reissue")
-    public CommonResponse reissue(HttpServletRequest request) throws Exception {
-        return  authService.reissue(request);
+    @PutMapping("/token")
+    public CommonResponse reissueAccessToken(HttpServletRequest request) throws Exception {
+        return  authService.reissueAccessToken(request);
     }
 }

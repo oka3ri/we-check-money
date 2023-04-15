@@ -2,18 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.wecheck.app.user.mapper.UserMapper">
-    <select id="checkDuplicateNickname" parameterType="String" resultType="int">
+    <select id="checkDuplicateNickname" parameterType="String" resultType="com.wecheck.app.user.dto.UserDto">
         SELECT
-            COUNT(0)
+            *
         FROM users
         WHERE nickname = #{nickname}
         AND del_date IS NULL
     </select>
-    <select id="checkDuplicateLoginId" parameterType="String" resultType="int">
+    <select id="checkDuplicateLoginId" parameterType="String" resultType="com.wecheck.app.user.dto.UserDto">
         SELECT
-            COUNT(0)
-        FROM user_auth
-        WHERE login_id = #{loginId}
-        AND del_date IS NULL
+            A.*,
+            B.*
+        FROM user_auth A
+        INNER JOIN users B ON B.user_id = A.user_id
+        WHERE B.del_date IS NULL
+        AND A.login_id = #{loginId}
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.wecheck.app.user.service;
 
+import com.wecheck.app.user.dto.UserDto;
 import com.wecheck.app.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,11 +10,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserMapper userMapper;
 
-    public Integer checkDuplicateNickname(String nickname) throws Exception {
+    public UserDto checkDuplicateNickname(String nickname) throws Exception {
         return userMapper.checkDuplicateNickname(nickname);
     }
 
-    public Integer checkDuplicateLoginId(String loginId) throws Exception {
+    public UserDto checkDuplicateLoginId(String loginId) throws Exception {
         return userMapper.checkDuplicateLoginId(loginId);
     }
 }
