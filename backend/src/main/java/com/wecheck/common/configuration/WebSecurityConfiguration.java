@@ -2,6 +2,10 @@ package com.wecheck.common.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wecheck.common.properties.CommonProperties;
+import com.wecheck.oauth.cookie.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.wecheck.oauth.handler.OAuth2AuthenticationFailureHandler;
+import com.wecheck.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import com.wecheck.oauth.service.CustomOAuth2UserService;
 import com.wecheck.security.jwt.JwtAccessDeniedHandler;
 import com.wecheck.security.jwt.JwtAuthenticationEntryPoint;
 import com.wecheck.security.jwt.JwtFilter;
@@ -33,7 +37,15 @@ public class WebSecurityConfiguration {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository httCookieOAuth2AuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -67,8 +79,21 @@ public class WebSecurityConfiguration {
                 .antMatchers(properties.getSecurity().getPermitAlls()).permitAll()
                 .anyRequest()
                 .authenticated()
+                // oauth2
                 .and()
+                .oauth2Login()
+                .authorizationEndpoint().baseUri("/oauth2/authorize")
+                .authorizationRequestRepository(httCookieOAuth2AuthorizationRequestRepository())
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/login/oauth2/code/**")
+                .and()
+                .userInfoEndpoint().userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
                 // jwt filter 설정
+                .and()
                 .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 //
 //        // iframe option
