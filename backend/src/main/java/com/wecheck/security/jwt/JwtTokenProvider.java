@@ -30,11 +30,13 @@ public class JwtTokenProvider {
     private final TokenService tokenService;
 
 
-    public String createAccessToken(UserDto user) throws Exception {
-        // subject: nickname
-        Claims claims = Jwts.claims().setSubject(user.getNickname());
+    public String createAccessToken(String subjectId, String nickname, Long userId) throws Exception {
+        // subject > 일반가입: loginId, 소셜가입: external_id
+        Claims claims = Jwts.claims().setSubject(subjectId);
+        // nickname 저장
+        claims.put("nickname", nickname);
         // userId 저장
-        claims.put("userId", user.getUserId());
+        claims.put("userId", userId);
 
         Date now = new Date();
         return Jwts.builder()
@@ -45,11 +47,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(UserDto user) throws Exception {
-        // subject: nickname
-        Claims claims = Jwts.claims().setSubject(user.getNickname());
+    public String createRefreshToken(String subjectId, String nickname, Long userId) throws Exception {
+        // subject > 일반가입: loginId, 소셜가입: external_id
+        Claims claims = Jwts.claims().setSubject(subjectId);
+        // nickname 저장
+        claims.put("nickname", nickname);
         // userId 저장
-        claims.put("userId", user.getUserId());
+        claims.put("userId", userId);
 
         Date now = new Date();
         return Jwts.builder()
@@ -75,6 +79,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+    // NOTE: 일반가입유저>login_id, 소셜가입유저: external_id
     public String getTokenSubject(String token) throws Exception {
         Claims claims = Jwts
                 .parser()
@@ -93,7 +98,7 @@ public class JwtTokenProvider {
                 .get("exp", Date.class);
     }
 
-    public Long getUserId(String token) throws Exception {
+    public Long getTokenUserId(String token) throws Exception {
         return Jwts
                 .parser()
                 .setSigningKey(properties.getToken().getSecret())

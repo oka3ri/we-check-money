@@ -44,8 +44,8 @@ public class AuthService {
             throw new CustomException("해당 사용자 정보가 존재하지 않습니다.");
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user);
-        String refreshToken = jwtTokenProvider.createRefreshToken(user);
+        String accessToken = jwtTokenProvider.createAccessToken(user.getLoginId(), user.getNickname(), user.getUserId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getLoginId(), user.getNickname(), user.getUserId());
         // DELETE: 기존 유저 리프레시토큰 삭제
         tokenService.deleteUserRefreshToken(RefreshTokenDto.builder().userId(user.getUserId()).build());
         // INSERT: 새로운 리프레시토큰 저장
@@ -70,7 +70,7 @@ public class AuthService {
         bParams.put("expiredDate", dateFmt);
         tokenService.insertTokenInBlackList(bParams);
         // DELETE: refresh token 정보 삭제
-        Long userId = jwtTokenProvider.getUserId(accessToken);
+        Long userId = jwtTokenProvider.getTokenUserId(accessToken);
         tokenService.deleteUserRefreshToken(RefreshTokenDto.builder().userId(userId).build());
 
         return CommonResponse.of(true, Optional.empty());
@@ -84,7 +84,7 @@ public class AuthService {
            return CommonResponse.of(false, TokenErrCode.TOKEN_003.getCode(), TokenErrCode.TOKEN_003.getMessage());
         }
 
-        Long tkUserId = jwtTokenProvider.getUserId(refreshToken); // 유저아이디 추출
+        Long tkUserId = jwtTokenProvider.getTokenUserId(refreshToken); // 유저아이디 추출
         UserDto user = authMapper.getUserInfo(UserDto.builder().userId(tkUserId).build());
         if(user == null) {
             throw new CustomException("해당 사용자 정보가 존재하지 않습니다.");
@@ -97,7 +97,12 @@ public class AuthService {
             return CommonResponse.of(false, TokenErrCode.TOKEN_003.getCode(), TokenErrCode.TOKEN_003.getMessage());
         }
 
-        return CommonResponse.of(true, TokenDto.builder().accessToken(jwtTokenProvider.createAccessToken(user)).build());
+        return CommonResponse.of(true,
+                TokenDto
+                        .builder()
+                        .accessToken(jwtTokenProvider.createAccessToken(user.getLoginId(), user.getNickname(), user.getUserId()))
+                        .build()
+        );
 
     }
 
@@ -124,8 +129,8 @@ public class AuthService {
             result = authMapper.getUserInfo(params);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(result);
-        String refreshToken = jwtTokenProvider.createRefreshToken(result);
+        String accessToken = jwtTokenProvider.createAccessToken(result.getLoginId(), result.getNickname(), result.getUserId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(result.getLoginId(), result.getNickname(), result.getUserId());
         // INSERT: user refreshToken
         long tokenExp = jwtTokenProvider.getTokenExpireDate(refreshToken).getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

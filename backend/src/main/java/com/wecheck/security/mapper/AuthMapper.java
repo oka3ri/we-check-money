@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("authMapper")
 public interface AuthMapper {
-    Integer checkDuplicateNickname(UserDto params) throws Exception;
-    Integer checkDuplicateLoginId(UserDto params) throws Exception;
     Integer insertSignUpUser(UserDto params) throws Exception;
     Integer insertSignUpUserAuthInfo(UserDto params) throws Exception;
     UserDto getUserInfo(UserDto params) throws Exception;
