@@ -59,7 +59,7 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 // Enable CORS and disable CSRF
                 .cors()
                 .configurationSource(corsConfigurationSource())
@@ -82,11 +82,10 @@ public class WebSecurityConfiguration {
                 // oauth2
                 .and()
                 .oauth2Login()
-                .authorizationEndpoint().baseUri("/oauth2/authorize")
+                .authorizationEndpoint().baseUri("/api/oauth2/authorize")
                 .authorizationRequestRepository(httCookieOAuth2AuthorizationRequestRepository())
                 .and()
-                .redirectionEndpoint()
-                .baseUri("/login/oauth2/code/**")
+                .redirectionEndpoint().baseUri("/oauth2/token/*")
                 .and()
                 .userInfoEndpoint().userService(customOAuth2UserService)
                 .and()
@@ -94,24 +93,8 @@ public class WebSecurityConfiguration {
                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 // jwt filter 설정
                 .and()
-                .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-//
-//        // iframe option
-//        switch (properties.getSecurity().getIframeOption()) {
-//            case "same-origin":
-//                http = http.headers().frameOptions().sameOrigin().and();
-//                break;
-//            case "deny":
-//                http = http.headers().frameOptions().deny().and();
-//                break;
-//            case "disable":
-//                http = http.headers().frameOptions().disable().and();
-//                break;
-//            default:
-//                break;
-//        }
-//
-        return http.build();
+                .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
