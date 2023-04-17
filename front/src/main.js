@@ -15,6 +15,8 @@ Vue.use(VueSimpleAlert, {
   },
 });
 
+window.Kakao.init("a31431011cd4fbc7a117ec76d269aee3");
+
 new Vue({
   router,
   store,
