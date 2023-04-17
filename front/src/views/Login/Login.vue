@@ -29,7 +29,7 @@ div
             .btn-wrapper.text-center
               .social-login-btn.naver-btn
                 img(src="@/assets/images/icons/common/naver.png")
-              .social-login-btn.kakao-btn
+              .social-login-btn.kakao-btn(@click='kakaoLogin()')
                 img(src="@/assets/images/icons/common/kakao.png")
               .social-login-btn.google-btn
                 img(src="@/assets/images/icons/common/google.png")
@@ -50,6 +50,7 @@ export default {
         password: "",
         // rememberMe: false,
       },
+      socialId: "",
       idRegex: /^[a-zA-Z][0-9a-zA-Z]{5,11}$/,
       pwRegex:
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{7,19}$/,
@@ -74,8 +75,32 @@ export default {
         return;
       }
     },
-    onSubmit() {
-      // this will be called only after form is valid. You can do api call here to login
+    kakaoLogin() {
+      window.Kakao.Auth.login({
+        scope: "profile_nickname",
+        success: this.getKakaoAccount,
+      });
+    },
+    async getKakaoAccount() {
+      let param = { kakaoId: "" };
+      await window.Kakao.API.request({
+        url: "/v2/user/me",
+        success: (res) => {
+          param.kakaoId = res.id;
+        },
+        // fail: (error) => {
+        //   console.log(error);
+        // },
+      });
+      this.$_axios("GET", "path", param).then((res) => {
+        if (res.data.res == "EMPTY_ID") {
+          alert("등록되지 않은 계정입니다. 회원 가입을 진행해 주세요.");
+          this.$_goTo({ name: "signup" });
+        } else {
+          // TODO: vuex 토큰 저장
+          // test
+        }
+      });
     },
   },
 };
