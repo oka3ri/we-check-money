@@ -1,4 +1,3 @@
-
 spring:
   web:
     locale: ko
@@ -6,6 +5,12 @@ spring:
       chain:
         compressed: true
         cache: true
+  datasource:
+    hikari:
+      username:
+      password:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url:
   security:
     oauth2:
       client:
@@ -14,22 +19,17 @@ spring:
             client-id:
             client-secret:
             scope:
+              - profile_nickname
             client-name: Kakao
             authorization-grant-type: authorization_code
             redirect-uri:
             client-authentication-method: POST
-      provider:
-        kakao:
-          authorization-uri: https://kauth.kakao.com/oauth/authorize
-          token-uri: https://kauth.kakao.com/oauth/token
-          user-info-uri: https://kauth.kakao.com/v2/user/me
-          user-name-attribute: id
-  datasource:
-    hikari:
-      jdbc-url:
-      username:
-      password:
-      driver-class-name: com.mysql.cj.jdbc.Driver
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 
 server:
   port: 9090
@@ -53,7 +53,7 @@ properties:
   common:
     security:
       ignores: /css/**, /fonts/**, /img/**, /js/**
-      permit-alls: /api/auth/**, /api/oauth2/**
+      permit-alls: /api/auth/**, /api/oauth2/**, /oauth2/token/* #, /test
       redirect-url: /
       iframe-option: disable #disable, same-origin, deny
       cors:
@@ -63,8 +63,8 @@ properties:
         allowed-headers: "*" #Context-Type, ...
       same-site: Lax #None, Lax, Strict
     token:
-      prefix:
-      token-name:
+      prefix: Bearer
+      token-name: Authorization
       access-token-expire-time: 1800000 #30분
       #access-token-expire-time: 60000 # for test: 1분
       refresh-token-expire-time: 604800000 #7일
