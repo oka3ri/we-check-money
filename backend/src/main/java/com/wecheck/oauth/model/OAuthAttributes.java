@@ -20,12 +20,13 @@ public class OAuthAttributes {
 
     private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> account = (Map<String, Object>) attributes.get("profile");
+        Map<String, Object> account = (Map<String, Object>) response.get("profile");
 
         return OAuthAttributes.builder()
                 .nickname((String) account.get("nickname"))
-                .userId((Long) response.get("id"))
-                .attributes(response)
+                //.userId((Long) response.get("id"))
+                .userId((Long) attributes.get("id"))
+                .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }

@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,13 +32,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        Optional<String> redirectUri = CookieUtils.getCookie(request, "redirect_uri").map(Cookie -> Cookie.getValue());
-
+        Optional<String> redirectUri = CookieUtils.getCookie(request, "redirect-uri").map(Cookie::getValue);
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
-        System.out.println("debugging >>>>> determineTargetUrl");
-        System.out.println(authentication.toString());
-        System.out.println(authentication.getName());
+        // TODO: access token 생성 추가 필요
         //String token = jwtTokenProvider.createAccessToken(authentication);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
